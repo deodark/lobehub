@@ -446,6 +446,7 @@ export default {
   'navPanel.library': 'Library',
   'navPanel.moveDown': 'Move Down',
   'navPanel.pinned': 'Pinned',
+  'navPanel.privateAgents': 'Private',
   'navPanel.moveUp': 'Move Up',
   'navPanel.show': 'Show',
   'navPanel.visible': 'Visible',

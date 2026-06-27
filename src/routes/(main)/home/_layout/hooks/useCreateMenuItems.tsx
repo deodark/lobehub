@@ -4,7 +4,14 @@ import { Icon } from '@lobehub/ui';
 import { GroupBotSquareIcon } from '@lobehub/ui/icons';
 import { App } from 'antd';
 import type { ItemType } from 'antd/es/menu/interface';
-import { BotIcon, FileTextIcon, FolderCogIcon, FolderPlus, MonitorSmartphone } from 'lucide-react';
+import {
+  BotIcon,
+  FileTextIcon,
+  FolderCogIcon,
+  FolderPlus,
+  LockIcon,
+  MonitorSmartphone,
+} from 'lucide-react';
 import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import useSWRMutation from 'swr/mutation';
@@ -29,6 +36,12 @@ interface CreateAgentOptions {
   groupId?: string;
   isPinned?: boolean;
   onSuccess?: () => void;
+  /**
+   * Forwarded to the server-side `visibility` column. Used by the sidebar's
+   * "Create Private …" entries; defaults to undefined which the server reads
+   * as `'public'`. Has no effect in personal mode.
+   */
+  visibility?: 'private' | 'public';
 }
 
 /**
@@ -103,7 +116,11 @@ export const useCreateMenuItems = () => {
       if (!canCreate) return;
 
       const config = options?.prompt ? { systemRole: options.prompt } : undefined;
-      await mutateAgent({ config, groupId: options?.groupId });
+      await mutateAgent({
+        config,
+        groupId: options?.groupId,
+        visibility: options?.visibility,
+      });
       options?.onSuccess?.();
     },
     [canCreate, mutateAgent],
@@ -312,21 +329,83 @@ export const useCreateMenuItems = () => {
    * Add session group menu item
    */
   const createSessionGroupMenuItem = useCallback(
-    (): ItemType => ({
+    (options?: { visibility?: 'private' | 'public' }): ItemType => ({
       icon: <Icon icon={FolderPlus} />,
       disabled: !canCreate,
-      key: 'addSessionGroup',
+      key: options?.visibility === 'private' ? 'addPrivateSessionGroup' : 'addSessionGroup',
       label: t('sessionGroup.createGroup'),
       onClick: async (info) => {
         info.domEvent?.stopPropagation();
         if (!canCreate) return;
 
         setIsCreatingSessionGroup(true);
-        await addGroup(t('sessionGroup.newGroup'));
+        await addGroup(t('sessionGroup.newGroup'), options?.visibility);
         setIsCreatingSessionGroup(false);
       },
     }),
     [canCreate, t, addGroup],
+  );
+
+  /**
+   * Private create entries — a single submenu reached from the Agent section
+   * action dropdown. Rather than duplicating the full create palette in two
+   * places we group "Private Agent / Private Group Chat / Private Folder"
+   * under one Lock-prefixed submenu so the public path stays the visual
+   * default.
+   */
+  const createPrivateMenuItem = useCallback(
+    (): ItemType => ({
+      icon: <Icon icon={LockIcon} />,
+      disabled: !canCreate,
+      key: 'createPrivate',
+      label: t('newPrivate', { defaultValue: 'Create Private...' }),
+      children: [
+        {
+          icon: <Icon icon={BotIcon} />,
+          disabled: !canCreate,
+          key: 'newPrivateAgent',
+          label: t('newAgent'),
+          onClick: async (info) => {
+            info.domEvent?.stopPropagation();
+            if (!canCreate) return;
+            if (openCreateModal) {
+              openCreateModal('agent', { visibility: 'private' });
+            } else {
+              await createAgent({ visibility: 'private' });
+            }
+          },
+        },
+        {
+          icon: <Icon icon={GroupBotSquareIcon} />,
+          disabled: !canCreate,
+          key: 'newPrivateGroupChat',
+          label: t('newGroupChat'),
+          onClick: async (info) => {
+            info.domEvent?.stopPropagation();
+            if (!canCreate) return;
+            if (openCreateModal) {
+              openCreateModal('group', { visibility: 'private' });
+            } else {
+              await createEmptyGroup({ visibility: 'private' });
+            }
+          },
+        },
+        {
+          icon: <Icon icon={FolderPlus} />,
+          disabled: !canCreate,
+          key: 'newPrivateSessionGroup',
+          label: t('sessionGroup.createGroup'),
+          onClick: async (info) => {
+            info.domEvent?.stopPropagation();
+            if (!canCreate) return;
+            setIsCreatingSessionGroup(true);
+            await addGroup(t('sessionGroup.newGroup'), 'private');
+            setIsCreatingSessionGroup(false);
+          },
+        },
+      ],
+    }),
+    [canCreate, t, createAgent, createEmptyGroup, openCreateModal, addGroup],
   );
 
   /**
@@ -393,6 +472,7 @@ export const useCreateMenuItems = () => {
     createPage,
     createPageMenuItem,
     createPlatformAgentMenuItem,
+    createPrivateMenuItem,
     createSessionGroupMenuItem,
     openCreateModal,
 

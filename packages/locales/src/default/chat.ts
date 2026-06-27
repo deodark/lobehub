@@ -438,6 +438,12 @@ export default {
   'newCodexAgent': 'Add Codex',
   'newPlatformAgent': 'Connect Agent',
   'newGroupChat': 'Create Group',
+  'newPrivate': 'Create Private...',
+
+  'agent.publishToWorkspace': 'Publish to Workspace',
+  'agent.publishToWorkspaceConfirm':
+    'Other workspace members will be able to use this agent. You will not be able to make it private again.',
+  'agent.publishToWorkspaceSuccess': 'Published to workspace',
 
   // Op status tray (floating panel above the chat input during a run)
   'opStatusTray.status.compressing': 'Compressing context',
@@ -614,6 +620,10 @@ export default {
   'sessionGroup.noAvailableAgents': 'No available agents',
   'sessionGroup.noMatchingAgents': 'No matching agents found',
   'sessionGroup.noSelectedAgents': 'Please select agents',
+  'sessionGroup.publishToWorkspace': 'Publish to Workspace',
+  'sessionGroup.publishToWorkspaceConfirm':
+    'Other workspace members will be able to use this folder. You will not be able to make it private again.',
+  'sessionGroup.publishToWorkspaceSuccess': 'Published to workspace',
   'sessionGroup.rename': 'Rename Category',
   'sessionGroup.renameSuccess': 'Renamed successfully',
   'sessionGroup.searchAgents': 'Search agents',

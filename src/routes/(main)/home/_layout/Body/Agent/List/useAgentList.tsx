@@ -21,12 +21,19 @@ export const useAgentList = (limitDefault = true) => {
   );
   const agentGroups = useHomeStore(homeAgentListSelectors.agentGroups, isEqual);
   const pinnedAgents = useHomeStore(homeAgentListSelectors.pinnedAgents, isEqual);
+  const privateAgentGroups = useHomeStore(homeAgentListSelectors.privateAgentGroups, isEqual);
+  const privateUngroupedAgents = useHomeStore(
+    homeAgentListSelectors.privateUngroupedAgents,
+    isEqual,
+  );
 
   return useMemo(() => {
     return {
       customList: agentGroups,
       defaultList: ungroupedAgents,
       pinnedList: pinnedAgents,
+      privateGroupList: privateAgentGroups,
+      privateUngroupedList: privateUngroupedAgents,
     };
-  }, [agentGroups, pinnedAgents, ungroupedAgents]);
+  }, [agentGroups, pinnedAgents, ungroupedAgents, privateAgentGroups, privateUngroupedAgents]);
 };

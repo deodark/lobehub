@@ -69,11 +69,20 @@ export class AgentModel {
 
   /**
    * Compat-mode ownership predicate for the `agents` table.
-   * - team mode (workspaceId set): `workspace_id = ?` (every member sees the same agents)
-   * - personal mode: `user_id = ? AND workspace_id IS NULL`
+   * - team mode (workspaceId set): `workspace_id = ?` plus visibility-aware
+   *   filtering — public agents are visible to every member, private agents
+   *   are only visible to their creator.
+   * - personal mode: `user_id = ? AND workspace_id IS NULL`.
    */
   private ownership = () =>
-    buildWorkspaceWhere({ userId: this.userId, workspaceId: this.workspaceId }, agents);
+    buildWorkspaceWhere(
+      { userId: this.userId, workspaceId: this.workspaceId },
+      {
+        userId: agents.userId,
+        workspaceId: agents.workspaceId,
+        visibility: agents.visibility,
+      },
+    );
 
   /** Same predicate but for the `sessions` table (used in delete cascade). */
   private sessionsOwnership = () =>
@@ -626,6 +635,30 @@ export class AgentModel {
       .update(agents)
       .set({ ...data, updatedAt: new Date() })
       .where(and(eq(agents.id, agentId), this.ownership()));
+  };
+
+  /**
+   * Publish a private agent into the workspace. **One-way only** — once an
+   * agent has been shared with the workspace, other members may already be
+   * using it, so we never let it slip back to `private`. Likewise the
+   * `user_id = ?` + `visibility = 'private'` guards lock the operation to
+   * the creator's own still-private agent.
+   *
+   * Use the existing `update` to change other fields; visibility is the only
+   * one with this asymmetric rule.
+   */
+  publishToWorkspace = async (agentId: string) => {
+    return this.db
+      .update(agents)
+      .set({ updatedAt: new Date(), visibility: 'public' })
+      .where(
+        and(
+          eq(agents.id, agentId),
+          this.ownership(),
+          eq(agents.userId, this.userId),
+          eq(agents.visibility, 'private'),
+        ),
+      );
   };
 
   touchUpdatedAt = async (agentId: string) => {
