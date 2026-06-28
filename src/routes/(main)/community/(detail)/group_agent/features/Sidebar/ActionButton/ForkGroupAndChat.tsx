@@ -12,7 +12,6 @@ import { useActiveWorkspaceId } from '@/business/client/hooks/useActiveWorkspace
 import { useWorkspaceAwareNavigate } from '@/features/Workspace/useWorkspaceAwareNavigate';
 import { usePermission } from '@/hooks/usePermission';
 import { useMarketAuth } from '@/layout/AuthProvider/MarketAuth';
-import { lambdaClient } from '@/libs/trpc/client';
 import { chatGroupService } from '@/services/chatGroup';
 import { discoverService } from '@/services/discover';
 import { marketApiService } from '@/services/marketApi';
@@ -97,19 +96,10 @@ const ForkGroupAndChat = memo<{ mobile?: boolean }>(() => {
       // Generate a unique identifier for the forked group
       const newIdentifier = generateMarketIdentifier();
 
-      let actAs: number | undefined;
-      if (activeWorkspaceId) {
-        try {
-          const { marketAccountId } =
-            await lambdaClient.workspace.ensureMarketOrganization.mutate();
-          actAs = marketAccountId;
-        } catch (error) {
-          console.warn(
-            'Failed to resolve Market organization for workspace; falling back to personal group fork:',
-            error,
-          );
-        }
-      }
+      // Workspace forks default to the user's Private bucket, so we keep the
+      // market-side fork on the actor's personal account. See the matching
+      // comment in `ForkAndChat.tsx` for the rationale.
+      const actAs: number | undefined = undefined;
 
       // Step 2: Fork the group via Market API
       const forkResult = await marketApiService.forkAgentGroup(identifier!, {

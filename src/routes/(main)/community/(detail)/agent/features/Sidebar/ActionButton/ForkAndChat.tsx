@@ -12,7 +12,6 @@ import { useActiveWorkspaceId } from '@/business/client/hooks/useActiveWorkspace
 import { useWorkspaceAwareNavigate } from '@/features/Workspace/useWorkspaceAwareNavigate';
 import { usePermission } from '@/hooks/usePermission';
 import { useMarketAuth } from '@/layout/AuthProvider/MarketAuth';
-import { lambdaClient } from '@/libs/trpc/client';
 import { agentService } from '@/services/agent';
 import { discoverService } from '@/services/discover';
 import { marketApiService } from '@/services/marketApi';
@@ -85,22 +84,13 @@ const ForkAndChat = memo<{ mobile?: boolean }>(({ mobile }) => {
       // Generate a unique identifier for the forked agent
       const newIdentifier = generateMarketIdentifier();
 
-      // When forking inside a workspace, attribute the fork to the workspace's
-      // Market organization mirror so `agents.ownerId` ends up on the org
-      // account rather than the actor. Provisioning is idempotent.
-      let actAs: number | undefined;
-      if (activeWorkspaceId) {
-        try {
-          const { marketAccountId } =
-            await lambdaClient.workspace.ensureMarketOrganization.mutate();
-          actAs = marketAccountId;
-        } catch (error) {
-          console.warn(
-            'Failed to provision Market organization for workspace; falling back to personal fork:',
-            error,
-          );
-        }
-      }
+      // Workspace forks land in the user's Private bucket by default, so the
+      // market-side fork stays attributed to the actor (their personal Market
+      // account). Org attribution via `ensureMarketOrganization` is reserved
+      // for the workspace-public path — wiring it in here would also require
+      // a community profile to be set up before the user can fork, which
+      // breaks the otherwise-frictionless "fork to my Private" UX.
+      const actAs: number | undefined = undefined;
 
       // Step 2: Fork the agent via Market API (single-item batch)
       const [forkOutcome] = await marketApiService.forkAgent([

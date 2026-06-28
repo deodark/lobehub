@@ -150,6 +150,7 @@ describe('systemStatusSelectors', () => {
       // Stored order has pages/tasks between the accordion and the first default-bottom item.
       // The invariant moves them into the bottom group (after the spacer).
       const stored = [
+        'private',
         'agent',
         'recents',
         'pages',
@@ -163,6 +164,7 @@ describe('systemStatusSelectors', () => {
         status: { sidebarItems: stored },
       });
       expect(systemStatusSelectors.sidebarItems(s)).toEqual([
+        'private',
         'agent',
         'recents',
         SIDEBAR_SPACER_ID,
@@ -179,6 +181,7 @@ describe('systemStatusSelectors', () => {
       const stored = [
         'pages',
         'recents',
+        'private',
         'agent',
         SIDEBAR_SPACER_ID,
         'image',
@@ -201,6 +204,7 @@ describe('systemStatusSelectors', () => {
         'pages',
         SIDEBAR_SPACER_ID,
         'recents',
+        'private',
         'agent',
         'image',
         'community',
@@ -214,6 +218,7 @@ describe('systemStatusSelectors', () => {
         'tasks',
         'pages',
         'recents',
+        'private',
         'agent',
         SIDEBAR_SPACER_ID,
         'image',
@@ -250,10 +255,12 @@ describe('systemStatusSelectors', () => {
         status: { sidebarSectionOrder: ['agent', 'recents'] },
       });
       const items = systemStatusSelectors.sidebarItems(s);
-      // accordion slot in the default list now uses the user's legacy order
+      // accordion slot uses the user's legacy order; `private` (added after
+      // the legacy state was saved) is backfilled at the head of the block.
       expect(items).toEqual([
         'tasks',
         'pages',
+        'private',
         'agent',
         'recents',
         SIDEBAR_SPACER_ID,
@@ -264,12 +271,25 @@ describe('systemStatusSelectors', () => {
       ]);
     });
 
-    it('should fall back to default when legacy `sidebarSectionOrder` is the default order', () => {
+    it('should preserve legacy accordion order when migrating from `sidebarSectionOrder`', () => {
       const s: GlobalState = merge(initialState, {
         status: { sidebarSectionOrder: ['recents', 'agent'] },
       });
       const items = systemStatusSelectors.sidebarItems(s);
-      expect(items).toEqual(DEFAULT_SIDEBAR_ITEMS);
+      // `private` (new accordion entry not present in legacy state) is
+      // backfilled at the head of the block; recents/agent keep legacy order.
+      expect(items).toEqual([
+        'tasks',
+        'pages',
+        'private',
+        'recents',
+        'agent',
+        SIDEBAR_SPACER_ID,
+        'image',
+        'community',
+        'resource',
+        'memory',
+      ]);
     });
 
     it('should prefer `sidebarItems` over legacy `sidebarSectionOrder` when both are set', () => {
