@@ -55,8 +55,8 @@ export const useGroupDropdownMenu = ({
   const showPublishAction = Boolean(activeWorkspaceId && id && isCustomGroup) && isPrivate;
 
   return useMemo(() => {
-    const createAgentItem = createAgentMenuItem({ groupId: id, isPinned });
-    const createGroupChatItem = createGroupChatMenuItem({ groupId: id });
+    const createAgentItem = createAgentMenuItem({ groupId: id, isPinned, visibility });
+    const createGroupChatItem = createGroupChatMenuItem({ groupId: id, visibility });
     const configItem = configGroupMenuItem(openConfigGroupModal);
     const renameItem = id && name ? renameGroupMenuItem(id, name, anchor) : null;
     const deleteItem = id ? deleteGroupMenuItem(id) : null;
@@ -128,6 +128,7 @@ export const useGroupDropdownMenu = ({
     id,
     isPinned,
     name,
+    visibility,
     createAgentMenuItem,
     createGroupChatMenuItem,
     configGroupMenuItem,

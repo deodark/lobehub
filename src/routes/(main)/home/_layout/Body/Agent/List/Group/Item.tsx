@@ -70,7 +70,12 @@ const GroupItem = memo<SidebarGroup>(({ items, id, name, visibility }) => {
         </Flexbox>
       }
     >
-      <SessionList dataSource={items} groupId={id} itemClassName={styles.item} />
+      <SessionList
+        dataSource={items}
+        groupId={id}
+        itemClassName={styles.item}
+        visibility={visibility}
+      />
     </AccordionItem>
   );
 });

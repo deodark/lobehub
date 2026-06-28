@@ -1361,9 +1361,19 @@ When I am ___, I need ___
   'workspace.billingPage.billing.upgradePlanModal.resultViewMembersCta': 'View members',
   'workspace.billingPage.billing.upgradePlanModal.resultPaymentCharged':
     'Prorated charge · Amount in billing',
+  'workspace.billingPage.billing.upgradePlanModal.resultPaymentChargedAmount':
+    '{{amount}} charged · Amount in billing',
   'workspace.billingPage.billing.upgradePlanModal.resultPaymentLabel': 'Payment',
   'workspace.billingPage.billing.upgradePlanModal.resultPaymentScheduled':
     'No charge now · Effective next cycle',
+  'workspace.billingPage.billing.upgradePlanModal.resultFailedDesc':
+    "We couldn't complete this update. {{reason}}",
+  'workspace.billingPage.billing.upgradePlanModal.resultFailedRetryCta': 'Try again',
+  'workspace.billingPage.billing.upgradePlanModal.resultFailedTitle': 'Update failed',
+  'workspace.billingPage.billing.upgradePlanModal.resultPlanChangedDesc': 'Plan upgrade applied.',
+  'workspace.billingPage.billing.upgradePlanModal.resultPlanChangedTitle': 'Plan upgraded',
+  'workspace.billingPage.billing.upgradePlanModal.resultPlanLabel': 'Plan',
+  'workspace.billingPage.billing.upgradePlanModal.resultPlanValue': '{{plan}} · {{interval}}',
   'workspace.billingPage.billing.upgradePlanModal.resultSeatsExpanded':
     'Purchased: {{changedSeats}} seats · Total: {{seats}} seats',
   'workspace.billingPage.billing.upgradePlanModal.resultSeatsLabel': 'Seats',

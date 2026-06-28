@@ -1,10 +1,10 @@
 'use client';
 
 import { AGENT_CHAT_URL } from '@lobechat/const';
-import { Button } from '@lobehub/ui';
-import { SplitButton } from '@lobehub/ui/base-ui';
+import { Button, DropdownMenu, Flexbox, Icon } from '@lobehub/ui';
 import { App } from 'antd';
 import { createStaticStyles } from 'antd-style';
+import { ChevronDownIcon } from 'lucide-react';
 import { customAlphabet } from 'nanoid/non-secure';
 import { memo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -30,6 +30,15 @@ import { useDetailContext } from '../../DetailProvider';
 const styles = createStaticStyles(({ css }) => ({
   buttonGroup: css`
     width: 100%;
+  `,
+  menuButton: css`
+    padding-inline: 8px;
+    border-start-start-radius: 0 !important;
+    border-end-start-radius: 0 !important;
+  `,
+  primaryButton: css`
+    border-start-end-radius: 0 !important;
+    border-end-end-radius: 0 !important;
   `,
 }));
 
@@ -220,18 +229,33 @@ const ForkAndChat = memo<{ mobile?: boolean }>(({ mobile }) => {
   ];
 
   return (
-    <SplitButton
-      className={styles.buttonGroup}
-      disabled={!canCreate}
-      loading={isLoading}
-      size={'large'}
-      type={'primary'}
-    >
-      <SplitButton.Main style={{ flex: 1 }} onClick={() => handleForkAndChat('private')}>
+    <Flexbox horizontal className={styles.buttonGroup} gap={0}>
+      <Button
+        block
+        className={styles.primaryButton}
+        disabled={!canCreate}
+        loading={isLoading}
+        size={'large'}
+        style={{ flex: 1, width: 'unset' }}
+        type={'primary'}
+        onClick={() => handleForkAndChat('private')}
+      >
         {t('fork.forkToPrivateAndChat')}
-      </SplitButton.Main>
-      <SplitButton.Menu items={menuItems} popupProps={{ style: { minWidth: 240 } }} />
-    </SplitButton>
+      </Button>
+      <DropdownMenu
+        items={menuItems}
+        popupProps={{ style: { minWidth: 240 } }}
+        triggerProps={{ disabled: isLoading || !canCreate }}
+      >
+        <Button
+          className={styles.menuButton}
+          disabled={isLoading || !canCreate}
+          icon={<Icon icon={ChevronDownIcon} />}
+          size={'large'}
+          type={'primary'}
+        />
+      </DropdownMenu>
+    </Flexbox>
   );
 });
 
