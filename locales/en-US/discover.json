@@ -142,6 +142,8 @@
   "fork.alreadyForked": "You have already forked this agent. Navigating to your fork...",
   "fork.failed": "Fork failed. Please try again.",
   "fork.forkAndChat": "Fork & Chat",
+  "fork.forkToPrivateAndChat": "Fork to Private & Chat",
+  "fork.forkToWorkspaceAndChat": "Fork to Workspace & Chat",
   "fork.forkedFrom": "Forked from",
   "fork.forks": "forks",
   "fork.forksCount": "{{count}} fork",

@@ -142,6 +142,8 @@
   "fork.alreadyForked": "你已经派生了此代理。正在跳转到你的派生版本……",
   "fork.failed": "派生失败。请重试。",
   "fork.forkAndChat": "派生并聊天",
+  "fork.forkToPrivateAndChat": "派生到私人并聊天",
+  "fork.forkToWorkspaceAndChat": "派生到工作空间并聊天",
   "fork.forkedFrom": "派生自",
   "fork.forks": "派生",
   "fork.forksCount": "{{count}} 个派生",

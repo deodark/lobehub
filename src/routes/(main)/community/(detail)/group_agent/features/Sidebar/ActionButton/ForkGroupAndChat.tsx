@@ -1,6 +1,7 @@
 'use client';
 
 import { Button } from '@lobehub/ui';
+import { SplitButton } from '@lobehub/ui/base-ui';
 import { App } from 'antd';
 import { createStaticStyles } from 'antd-style';
 import { customAlphabet } from 'nanoid/non-secure';
@@ -40,6 +41,8 @@ const generateMarketIdentifier = () => {
   return generate();
 };
 
+type ForkTarget = 'private' | 'public';
+
 const ForkGroupAndChat = memo<{ mobile?: boolean }>(() => {
   const {
     avatar,
@@ -70,7 +73,7 @@ const ForkGroupAndChat = memo<{ mobile?: boolean }>(() => {
     title,
   };
 
-  const handleForkAndChat = async () => {
+  const handleForkAndChat = async (target: ForkTarget = 'private') => {
     if (!canCreate) return;
     // Check if user is authenticated
     if (!isAuthenticated) {
@@ -172,10 +175,10 @@ const ForkGroupAndChat = memo<{ mobile?: boolean }>(() => {
         );
       }
 
-      // Step 4: Prepare group config. In workspace mode the fork lands in
-      // the user's Private bucket so a freshly-grabbed community group chat
-      // isn't surfaced to every teammate before the user has decided to
-      // share it.
+      // Step 4: Prepare group config. `target` decides where the chat
+      // group lands in the sidebar: Private (only the creator sees it) or
+      // workspace-shared. In personal mode visibility is left unset so the
+      // column default (`public`) applies harmlessly.
       const groupConfig = {
         config: {
           ...config,
@@ -186,7 +189,7 @@ const ForkGroupAndChat = memo<{ mobile?: boolean }>(() => {
         ...meta,
         // Store marketIdentifier at top-level (same as agents)
         marketIdentifier: forkResult.group.identifier,
-        ...(activeWorkspaceId ? { visibility: 'private' as const } : {}),
+        ...(activeWorkspaceId ? { visibility: target } : {}),
       };
 
       // Step 5: Prepare member agents from market data
@@ -247,18 +250,47 @@ const ForkGroupAndChat = memo<{ mobile?: boolean }>(() => {
     }
   };
 
+  // Personal mode: plain primary button, no Private/Public choice to make.
+  if (!activeWorkspaceId) {
+    return (
+      <Button
+        block
+        className={styles.buttonGroup}
+        disabled={!canCreate}
+        loading={isLoading}
+        size={'large'}
+        type={'primary'}
+        onClick={() => handleForkAndChat('private')}
+      >
+        {t('fork.forkAndChat')}
+      </Button>
+    );
+  }
+
+  // Workspace mode: split button with Private as the default + an explicit
+  // "Fork to Workspace" option in the dropdown for users who want to share
+  // the chat group with all members immediately.
+  const menuItems = [
+    {
+      key: 'fork-workspace',
+      label: t('fork.forkToWorkspaceAndChat'),
+      onClick: () => handleForkAndChat('public'),
+    },
+  ];
+
   return (
-    <Button
-      block
+    <SplitButton
       className={styles.buttonGroup}
       disabled={!canCreate}
       loading={isLoading}
       size={'large'}
       type={'primary'}
-      onClick={handleForkAndChat}
     >
-      {t('fork.forkAndChat')}
-    </Button>
+      <SplitButton.Main style={{ flex: 1 }} onClick={() => handleForkAndChat('private')}>
+        {t('fork.forkToPrivateAndChat')}
+      </SplitButton.Main>
+      <SplitButton.Menu items={menuItems} popupProps={{ style: { minWidth: 240 } }} />
+    </SplitButton>
   );
 });
 

@@ -2,6 +2,7 @@
 
 import { AGENT_CHAT_URL } from '@lobechat/const';
 import { Button } from '@lobehub/ui';
+import { SplitButton } from '@lobehub/ui/base-ui';
 import { App } from 'antd';
 import { createStaticStyles } from 'antd-style';
 import { customAlphabet } from 'nanoid/non-secure';
@@ -41,6 +42,8 @@ const generateMarketIdentifier = () => {
   return generate();
 };
 
+type ForkTarget = 'private' | 'public';
+
 const ForkAndChat = memo<{ mobile?: boolean }>(({ mobile }) => {
   const { identifier, title, config, avatar, backgroundColor, description, tags, editorData } =
     useDetailContext();
@@ -65,7 +68,11 @@ const ForkAndChat = memo<{ mobile?: boolean }>(({ mobile }) => {
     title,
   };
 
-  const handleForkAndChat = async () => {
+  // `target` only matters in workspace mode. Personal-mode forks ignore it
+  // (every row there is implicitly owner-private). Default = Private so
+  // newly-grabbed agents don't surface to teammates before the user has
+  // had a chance to vet them.
+  const handleForkAndChat = async (target: ForkTarget = 'private') => {
     if (!canCreate) return;
     // Check if user is authenticated
     if (!isAuthenticated) {
@@ -95,14 +102,11 @@ const ForkAndChat = memo<{ mobile?: boolean }>(({ mobile }) => {
       // Workspace mode forks must be attributed to the workspace's Market
       // organization mirror — the per-user trust token always carries the
       // workspaceId, so Market rejects the request without
-      // `x-lobe-owner-account-id` (403). The local agent still lands in the
-      // user's Private bucket via `visibility: 'private'` below; "Publish to
-      // Workspace" promotes it later.
+      // `x-lobe-owner-account-id` (403). Whether the local agent ends up
+      // private or public is independent of this market-side ownership.
       //
       // When the workspace has no Community profile yet we abort and prompt
-      // the user instead of falling through to a doomed personal-fork
-      // attempt (the trust token can't shed its workspaceId from the
-      // client). Owners get a deep-link CTA; everyone else is asked to
+      // the user. Owners get a deep-link CTA; everyone else is asked to
       // contact the owner.
       let actAs: number | undefined;
       if (activeWorkspaceId) {
@@ -157,12 +161,13 @@ const ForkAndChat = memo<{ mobile?: boolean }>(({ mobile }) => {
         },
       };
 
-      // Step 4: Add to local agent list. In workspace mode the fork lands in
-      // the user's Private bucket so a freshly-grabbed community agent isn't
-      // pushed to every teammate before the user has decided to share it.
+      // Step 4: Add to local agent list. `target` decides where it lands —
+      // Private bucket (only the creator sees it) or workspace-shared
+      // (visible to every member). In personal mode `visibility` is left
+      // unset and the column defaults to `public` (no-op).
       const result = await createAgent({
         ...agentData,
-        ...(activeWorkspaceId ? { visibility: 'private' as const } : {}),
+        ...(activeWorkspaceId ? { visibility: target } : {}),
       });
       await refreshAgentList();
 
@@ -185,18 +190,48 @@ const ForkAndChat = memo<{ mobile?: boolean }>(({ mobile }) => {
     }
   };
 
+  // Personal mode has no Private/Public split — render the plain primary
+  // button so users don't see a meaningless dropdown.
+  if (!activeWorkspaceId) {
+    return (
+      <Button
+        block
+        className={styles.buttonGroup}
+        disabled={!canCreate}
+        loading={isLoading}
+        size={'large'}
+        type={'primary'}
+        onClick={() => handleForkAndChat('private')}
+      >
+        {t('fork.forkAndChat')}
+      </Button>
+    );
+  }
+
+  // Workspace mode: split button with Private as the default (matches the
+  // sidebar's Private bucket) and an explicit "Fork to Workspace" option
+  // for users who want to share immediately.
+  const menuItems = [
+    {
+      key: 'fork-workspace',
+      label: t('fork.forkToWorkspaceAndChat'),
+      onClick: () => handleForkAndChat('public'),
+    },
+  ];
+
   return (
-    <Button
-      block
+    <SplitButton
       className={styles.buttonGroup}
       disabled={!canCreate}
       loading={isLoading}
       size={'large'}
       type={'primary'}
-      onClick={handleForkAndChat}
     >
-      {t('fork.forkAndChat')}
-    </Button>
+      <SplitButton.Main style={{ flex: 1 }} onClick={() => handleForkAndChat('private')}>
+        {t('fork.forkToPrivateAndChat')}
+      </SplitButton.Main>
+      <SplitButton.Menu items={menuItems} popupProps={{ style: { minWidth: 240 } }} />
+    </SplitButton>
   );
 });
 

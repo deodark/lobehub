@@ -156,6 +156,9 @@ export default {
   // Fork related
   'fork.forkAndChat': 'Fork & Chat',
 
+  'fork.forkToPrivateAndChat': 'Fork to Private & Chat',
+  'fork.forkToWorkspaceAndChat': 'Fork to Workspace & Chat',
+
   'fork.forkedFrom': 'Forked from',
 
   'fork.forks': 'forks',
