@@ -62,7 +62,7 @@ export const mapResponseToState = (
 > => ({
   agentGroups: response.groups,
   pinnedAgents: response.pinned,
-  privateAgentGroups: response.privateGroups,
-  privateUngroupedAgents: response.privateUngrouped,
+  privateAgentGroups: response.privateGroups ?? [],
+  privateUngroupedAgents: response.privateUngrouped ?? [],
   ungroupedAgents: response.ungrouped,
 });

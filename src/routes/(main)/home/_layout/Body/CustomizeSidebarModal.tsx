@@ -59,14 +59,22 @@ const ALL_SIDEBAR_ITEMS: SidebarItemConfig[] = [
   { id: 'pages', labelKey: 'tab.pages', routeId: 'page' },
   { id: 'recents', labelKey: 'recents' },
   { alwaysVisible: true, id: 'agent', labelKey: 'navPanel.agent' },
+  { id: 'private', labelKey: 'navPanel.privateAgents' },
   { id: 'image', labelKey: 'tab.generation', routeId: 'image' },
   { id: 'community', labelKey: 'tab.community', routeId: 'community' },
   { id: 'resource', labelKey: 'tab.resource', routeId: 'resource' },
   { id: 'memory', labelKey: 'tab.memory', routeId: 'memory' },
 ];
 
+// Private is workspace-only; in personal mode every row is implicitly
+// owner-private, so hide it from the customizer where toggling it on
+// would render an empty accordion no user can populate.
 export const getAvailableSidebarItems = (isWorkspaceMode: boolean): SidebarItemConfig[] =>
-  ALL_SIDEBAR_ITEMS.filter((item) => !(isWorkspaceMode && item.id === 'memory'));
+  ALL_SIDEBAR_ITEMS.filter((item) => {
+    if (isWorkspaceMode && item.id === 'memory') return false;
+    if (!isWorkspaceMode && item.id === 'private') return false;
+    return true;
+  });
 
 export const getSortableSidebarItemIds = (isWorkspaceMode: boolean): Set<string> =>
   new Set([...getAvailableSidebarItems(isWorkspaceMode).map((item) => item.id), SIDEBAR_SPACER_ID]);

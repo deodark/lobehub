@@ -4,7 +4,6 @@ import { AccordionItem, ContextMenuTrigger, Flexbox, Text } from '@lobehub/ui';
 import React, { memo, Suspense, useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { useActiveWorkspaceId } from '@/business/client/hooks/useActiveWorkspaceId';
 import NeuralNetworkLoading from '@/components/NeuralNetworkLoading';
 import SkeletonList from '@/features/NavPanel/components/SkeletonList';
 import { useFetchAgentList } from '@/hooks/useFetchAgentList';
@@ -31,36 +30,26 @@ const Agent = memo<AgentProps>(({ itemKey }) => {
     createGroupChatMenuItem,
     createHeterogeneousAgentMenuItems,
     createPlatformAgentMenuItem,
-    createPrivateMenuItem,
     isLoading,
   } = useCreateMenuItems();
-
-  // Private create entries only surface in workspace mode — in personal mode
-  // every row is implicitly the owner's so a separate "Private" entry would
-  // be redundant.
-  const activeWorkspaceId = useActiveWorkspaceId();
 
   const addMenuItems = useMemo(() => {
     const heterogeneousItems = createHeterogeneousAgentMenuItems();
     const platformItem = createPlatformAgentMenuItem();
-    const privateItem = activeWorkspaceId ? createPrivateMenuItem() : null;
 
     return [
       createAgentMenuItem(),
       createGroupChatMenuItem(),
-      ...(privateItem ? [{ type: 'divider' as const }, privateItem] : []),
       ...(heterogeneousItems.length > 0
         ? [{ type: 'divider' as const }, ...heterogeneousItems]
         : []),
       ...(platformItem ? [{ type: 'divider' as const }, platformItem] : []),
     ];
   }, [
-    activeWorkspaceId,
     createAgentMenuItem,
     createGroupChatMenuItem,
     createHeterogeneousAgentMenuItems,
     createPlatformAgentMenuItem,
-    createPrivateMenuItem,
   ]);
 
   const handleOpenConfigGroupModal = useCallback(() => {

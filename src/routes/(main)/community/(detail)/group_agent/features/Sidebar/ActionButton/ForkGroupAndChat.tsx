@@ -156,7 +156,10 @@ const ForkGroupAndChat = memo<{ mobile?: boolean }>(() => {
         );
       }
 
-      // Step 4: Prepare group config
+      // Step 4: Prepare group config. In workspace mode the fork lands in
+      // the user's Private bucket so a freshly-grabbed community group chat
+      // isn't surfaced to every teammate before the user has decided to
+      // share it.
       const groupConfig = {
         config: {
           ...config,
@@ -167,6 +170,7 @@ const ForkGroupAndChat = memo<{ mobile?: boolean }>(() => {
         ...meta,
         // Store marketIdentifier at top-level (same as agents)
         marketIdentifier: forkResult.group.identifier,
+        ...(activeWorkspaceId ? { visibility: 'private' as const } : {}),
       };
 
       // Step 5: Prepare member agents from market data

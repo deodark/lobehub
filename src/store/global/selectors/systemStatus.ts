@@ -76,6 +76,7 @@ export const DEFAULT_SIDEBAR_ITEMS: string[] = [
   'pages',
   'recents',
   'agent',
+  'private',
   SIDEBAR_SPACER_ID,
   'image',
   'community',
@@ -83,8 +84,10 @@ export const DEFAULT_SIDEBAR_ITEMS: string[] = [
   'memory',
 ];
 
-/** Items that must stay contiguous in the sidebar list (accordion block). */
-export const SIDEBAR_ACCORDION_KEYS = new Set(['recents', 'agent']);
+/** Items that must stay contiguous in the sidebar list (accordion block).
+ * `private` sits between `agent` and the spacer so the user reads the
+ * workspace-shared agents first and their personal items right below. */
+export const SIDEBAR_ACCORDION_KEYS = new Set(['recents', 'agent', 'private']);
 
 const DEFAULT_BOTTOM_KEYS = new Set(
   DEFAULT_SIDEBAR_ITEMS.slice(DEFAULT_SIDEBAR_ITEMS.indexOf(SIDEBAR_SPACER_ID) + 1),

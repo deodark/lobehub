@@ -104,7 +104,7 @@ export const DEFAULT_MODEL_DETAIL_PANEL_EXPANDED_KEYS = [
   'config',
 ] as const satisfies readonly ModelDetailPanelExpandedKey[];
 
-export const DEFAULT_HOME_SIDEBAR_EXPANDED_KEYS = ['recents', 'agent'];
+export const DEFAULT_HOME_SIDEBAR_EXPANDED_KEYS = ['recents', 'agent', 'private'];
 
 export interface SystemStatus {
   /**

@@ -435,6 +435,7 @@ export default {
   'loading': 'Loading...',
   'mail.business': 'Business Cooperation',
   'mail.support': 'Email Support',
+  'addNew': 'Add new',
   'more': 'More',
   'navPanel.agent': 'Agents',
   'navPanel.bottomDivider': 'Items below anchor to bottom',

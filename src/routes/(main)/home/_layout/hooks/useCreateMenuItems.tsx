@@ -4,14 +4,7 @@ import { Icon } from '@lobehub/ui';
 import { GroupBotSquareIcon } from '@lobehub/ui/icons';
 import { App } from 'antd';
 import type { ItemType } from 'antd/es/menu/interface';
-import {
-  BotIcon,
-  FileTextIcon,
-  FolderCogIcon,
-  FolderPlus,
-  LockIcon,
-  MonitorSmartphone,
-} from 'lucide-react';
+import { BotIcon, FileTextIcon, FolderCogIcon, FolderPlus, MonitorSmartphone } from 'lucide-react';
 import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import useSWRMutation from 'swr/mutation';
@@ -236,14 +229,19 @@ export const useCreateMenuItems = () => {
     (options?: CreateAgentOptions): ItemType => ({
       icon: <Icon icon={BotIcon} />,
       disabled: !canCreate,
-      key: 'newAgent',
+      // Key needs to vary by visibility so the public and private "New
+      // Agent" entries can coexist (e.g. if a future menu lists both).
+      key: options?.visibility === 'private' ? 'newPrivateAgent' : 'newAgent',
       label: t('newAgent'),
       onClick: async (info) => {
         info.domEvent?.stopPropagation();
         if (!canCreate) return;
 
         if (openCreateModal) {
-          openCreateModal('agent', options?.groupId ? { groupId: options.groupId } : undefined);
+          openCreateModal('agent', {
+            ...(options?.groupId ? { groupId: options.groupId } : {}),
+            ...(options?.visibility ? { visibility: options.visibility } : {}),
+          });
         } else {
           await createAgent(options);
         }
@@ -309,14 +307,17 @@ export const useCreateMenuItems = () => {
     (options?: CreateAgentOptions): ItemType => ({
       icon: <Icon icon={GroupBotSquareIcon} />,
       disabled: !canCreate,
-      key: 'newGroupChat',
+      key: options?.visibility === 'private' ? 'newPrivateGroupChat' : 'newGroupChat',
       label: t('newGroupChat'),
       onClick: async (info) => {
         info.domEvent?.stopPropagation();
         if (!canCreate) return;
 
         if (openCreateModal) {
-          openCreateModal('group', options?.groupId ? { groupId: options.groupId } : undefined);
+          openCreateModal('group', {
+            ...(options?.groupId ? { groupId: options.groupId } : {}),
+            ...(options?.visibility ? { visibility: options.visibility } : {}),
+          });
         } else {
           await createEmptyGroup(options);
         }
@@ -344,68 +345,6 @@ export const useCreateMenuItems = () => {
       },
     }),
     [canCreate, t, addGroup],
-  );
-
-  /**
-   * Private create entries — a single submenu reached from the Agent section
-   * action dropdown. Rather than duplicating the full create palette in two
-   * places we group "Private Agent / Private Group Chat / Private Folder"
-   * under one Lock-prefixed submenu so the public path stays the visual
-   * default.
-   */
-  const createPrivateMenuItem = useCallback(
-    (): ItemType => ({
-      icon: <Icon icon={LockIcon} />,
-      disabled: !canCreate,
-      key: 'createPrivate',
-      label: t('newPrivate', { defaultValue: 'Create Private...' }),
-      children: [
-        {
-          icon: <Icon icon={BotIcon} />,
-          disabled: !canCreate,
-          key: 'newPrivateAgent',
-          label: t('newAgent'),
-          onClick: async (info) => {
-            info.domEvent?.stopPropagation();
-            if (!canCreate) return;
-            if (openCreateModal) {
-              openCreateModal('agent', { visibility: 'private' });
-            } else {
-              await createAgent({ visibility: 'private' });
-            }
-          },
-        },
-        {
-          icon: <Icon icon={GroupBotSquareIcon} />,
-          disabled: !canCreate,
-          key: 'newPrivateGroupChat',
-          label: t('newGroupChat'),
-          onClick: async (info) => {
-            info.domEvent?.stopPropagation();
-            if (!canCreate) return;
-            if (openCreateModal) {
-              openCreateModal('group', { visibility: 'private' });
-            } else {
-              await createEmptyGroup({ visibility: 'private' });
-            }
-          },
-        },
-        {
-          icon: <Icon icon={FolderPlus} />,
-          disabled: !canCreate,
-          key: 'newPrivateSessionGroup',
-          label: t('sessionGroup.createGroup'),
-          onClick: async (info) => {
-            info.domEvent?.stopPropagation();
-            if (!canCreate) return;
-            setIsCreatingSessionGroup(true);
-            await addGroup(t('sessionGroup.newGroup'), 'private');
-            setIsCreatingSessionGroup(false);
-          },
-        },
-      ],
-    }),
-    [canCreate, t, createAgent, createEmptyGroup, openCreateModal, addGroup],
   );
 
   /**
@@ -472,7 +411,6 @@ export const useCreateMenuItems = () => {
     createPage,
     createPageMenuItem,
     createPlatformAgentMenuItem,
-    createPrivateMenuItem,
     createSessionGroupMenuItem,
     openCreateModal,
 

@@ -137,8 +137,13 @@ const ForkAndChat = memo<{ mobile?: boolean }>(({ mobile }) => {
         },
       };
 
-      // Step 4: Add to local agent list
-      const result = await createAgent(agentData);
+      // Step 4: Add to local agent list. In workspace mode the fork lands in
+      // the user's Private bucket so a freshly-grabbed community agent isn't
+      // pushed to every teammate before the user has decided to share it.
+      const result = await createAgent({
+        ...agentData,
+        ...(activeWorkspaceId ? { visibility: 'private' as const } : {}),
+      });
       await refreshAgentList();
 
       // Step 5: Report fork event (using 'add' event type)

@@ -438,8 +438,6 @@ export default {
   'newCodexAgent': 'Add Codex',
   'newPlatformAgent': 'Connect Agent',
   'newGroupChat': 'Create Group',
-  'newPrivate': 'Create Private...',
-
   'agent.publishToWorkspace': 'Publish to Workspace',
   'agent.publishToWorkspaceConfirm':
     'Other workspace members will be able to use this agent. You will not be able to make it private again.',
