@@ -10,6 +10,7 @@ import { useShallow } from 'zustand/react/shallow';
 import { messageMapKey } from '@/store/chat/utils/messageMapKey';
 
 import WideScreenContainer from '../../../WideScreenContainer';
+import { MessageForwardSelectionBar } from '../../MessageForward';
 import {
   dataSelectors,
   inputSelectors,
@@ -360,6 +361,8 @@ const VirtualizedList = memo<VirtualizedListProps>(
             onScrollToBottom={() => scrollToBottom(true)}
           />
         </WideScreenContainer>
+        {/* Pinned to the list viewport bottom; only renders while multi-selecting */}
+        <MessageForwardSelectionBar />
       </div>
     );
   },

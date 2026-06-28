@@ -5,6 +5,7 @@ import { memo, Suspense, useMemo } from 'react';
 
 import ChatMiniMap from '@/features/ChatMiniMap';
 import { ChatList, ConversationProvider } from '@/features/Conversation';
+import { ForwardMessageDispatcher } from '@/features/Conversation/MessageForward';
 import { useOperationState } from '@/hooks/useOperationState';
 import { useChatStore } from '@/store/chat';
 import { messageMapKey } from '@/store/chat/utils/messageMapKey';
@@ -69,6 +70,7 @@ const Conversation = memo<ConversationAreaProps>(({ mobile = false }) => {
       <MainChatInput />
       <ChatHydration />
       <ThreadHydration />
+      <ForwardMessageDispatcher />
       {!mobile && (
         <>
           <ChatMiniMap />

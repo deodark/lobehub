@@ -5,9 +5,22 @@ import { type State } from '../../initialState';
 
 export interface MessageEditingAction {
   /**
+   * Enter multi-select mode. When `initialId` is provided that message starts
+   * selected, so "select" from a single message's menu feels immediate.
+   */
+  enterSelectionMode: (initialId?: string) => void;
+  /**
+   * Leave multi-select mode and drop every selected id.
+   */
+  exitSelectionMode: () => void;
+  /**
    * Toggle message editing state
    */
   toggleMessageEditing: (id: string, editing: boolean) => void;
+  /**
+   * Toggle whether a message is checked in multi-select mode.
+   */
+  toggleMessageSelected: (id: string, selected?: boolean) => void;
 }
 
 /**
@@ -30,11 +43,30 @@ export const messageEditingSlice: StateCreator<
   [],
   MessageEditingAction
 > = (set, get) => ({
+  enterSelectionMode: (initialId) => {
+    set(
+      { selectedMessageIds: initialId ? [initialId] : [], selectionMode: true },
+      false,
+      'enterSelectionMode',
+    );
+  },
+  exitSelectionMode: () => {
+    set({ selectedMessageIds: [], selectionMode: false }, false, 'exitSelectionMode');
+  },
   toggleMessageEditing: (id, editing) => {
     set(
       { messageEditingIds: toggleBooleanList(get().messageEditingIds, id, editing) },
       false,
       'toggleMessageEditing',
+    );
+  },
+  toggleMessageSelected: (id, selected) => {
+    const current = get().selectedMessageIds;
+    const next = selected ?? !current.includes(id);
+    set(
+      { selectedMessageIds: toggleBooleanList(current, id, next) },
+      false,
+      'toggleMessageSelected',
     );
   },
 });
