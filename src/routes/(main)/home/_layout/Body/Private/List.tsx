@@ -8,7 +8,6 @@ import { useTranslation } from 'react-i18next';
 
 import NavItem from '@/features/NavPanel/components/NavItem';
 import SkeletonList from '@/features/NavPanel/components/SkeletonList';
-import { useFetchAgentList } from '@/hooks/useFetchAgentList';
 import { useGlobalStore } from '@/store/global';
 import { systemStatusSelectors } from '@/store/global/selectors';
 import { useHomeStore } from '@/store/home';
@@ -33,8 +32,6 @@ const PrivateList = memo(() => {
   );
   const privateUngroupedCount = useHomeStore(homeAgentListSelectors.privateUngroupedAgentsCount);
   const openAllAgentsDrawer = useHomeStore((s) => s.openAllAgentsDrawer);
-
-  useFetchAgentList();
 
   if (!isInit) return <SkeletonList rows={2} />;
 
