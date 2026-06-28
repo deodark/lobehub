@@ -1,7 +1,7 @@
 import { type SidebarGroup } from '@lobechat/types';
 import { AccordionItem, ContextMenuTrigger, Flexbox, Icon, Text } from '@lobehub/ui';
 import { createStaticStyles } from 'antd-style';
-import { HashIcon, Loader2, LockIcon } from 'lucide-react';
+import { HashIcon, Loader2 } from 'lucide-react';
 import React, { memo, useCallback, useMemo, useState } from 'react';
 
 import { useHomeStore } from '@/store/home';
@@ -19,7 +19,6 @@ const styles = createStaticStyles(({ css }) => ({
 }));
 
 const GroupItem = memo<SidebarGroup>(({ items, id, name, visibility }) => {
-  const isPrivate = visibility === 'private';
   const [anchor, setAnchor] = useState<HTMLElement | null>(null);
   const isUpdating = useHomeStore((s) => s.groupUpdatingId === id);
 
@@ -46,12 +45,8 @@ const GroupItem = memo<SidebarGroup>(({ items, id, name, visibility }) => {
     if (isUpdating) {
       return <Icon spin icon={Loader2} style={{ opacity: 0.5 }} />;
     }
-    // Surface a Lock glyph on private folders so the user can tell at a
-    // glance which folders are workspace-shared and which are scoped to
-    // themselves.
-    if (isPrivate) return <Icon icon={LockIcon} style={{ opacity: 0.5 }} />;
     return <Icon icon={HashIcon} style={{ opacity: 0.5 }} />;
-  }, [isUpdating, isPrivate]);
+  }, [isUpdating]);
 
   return (
     <AccordionItem

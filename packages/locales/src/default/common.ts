@@ -448,6 +448,7 @@ export default {
   'navPanel.moveDown': 'Move Down',
   'navPanel.pinned': 'Pinned',
   'navPanel.privateAgents': 'Private',
+  'navPanel.publicAgents': 'Public',
   'navPanel.moveUp': 'Move Up',
   'navPanel.show': 'Show',
   'navPanel.visible': 'Visible',

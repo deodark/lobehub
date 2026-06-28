@@ -43,9 +43,22 @@ const ungroupedAgentsLimited =
     s.ungroupedAgents.slice(0, pageSize);
 
 /**
+ * Limit private ungrouped agents for the Private sidebar bucket
+ */
+const privateUngroupedAgentsLimited =
+  (pageSize: number) =>
+  (s: HomeStore): SidebarAgentItem[] =>
+    s.privateUngroupedAgents.slice(0, pageSize);
+
+/**
  * Get ungrouped agents count
  */
 const ungroupedAgentsCount = (s: HomeStore): number => s.ungroupedAgents.length;
+
+/**
+ * Get private ungrouped agents count
+ */
+const privateUngroupedAgentsCount = (s: HomeStore): number => s.privateUngroupedAgents.length;
 
 /**
  * Check if agent list is initialized
@@ -101,6 +114,8 @@ export const homeAgentListSelectors = {
   pinnedAgents,
   privateAgentGroups,
   privateUngroupedAgents,
+  privateUngroupedAgentsCount,
+  privateUngroupedAgentsLimited,
   ungroupedAgents,
   ungroupedAgentsCount,
   ungroupedAgentsLimited,

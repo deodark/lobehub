@@ -291,7 +291,9 @@ export const useCreateMenuItems = () => {
         onClick: (info) => {
           info.domEvent?.stopPropagation();
           agentModal?.openCreatePlatformAgentModal(
-            options?.groupId ? { groupId: options.groupId } : undefined,
+            options?.groupId || options?.visibility
+              ? { groupId: options?.groupId, visibility: options?.visibility }
+              : undefined,
           );
         },
       };

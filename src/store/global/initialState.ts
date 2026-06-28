@@ -199,6 +199,10 @@ export interface SystemStatus {
    */
   pagePageSize?: number;
   portalWidth: number;
+  /**
+   * number of private agents (ungrouped) to display in the Private sidebar bucket
+   */
+  privateAgentPageSize?: number;
   readNotificationSlugs?: string[];
   /**
    * number of recent items to display
@@ -339,6 +343,7 @@ export interface GlobalState {
 export const INITIAL_STATUS = {
   agentBuilderPanelWidth: 360,
   agentPageSize: 5,
+  privateAgentPageSize: 5,
   chatInputHeight: 64,
   recentPageSize: 5,
   taskListViewOptions: {

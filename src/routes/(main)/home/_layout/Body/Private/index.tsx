@@ -1,7 +1,6 @@
 'use client';
 
-import { AccordionItem, ContextMenuTrigger, Flexbox, Icon, Text } from '@lobehub/ui';
-import { LockIcon } from 'lucide-react';
+import { AccordionItem, ContextMenuTrigger, Flexbox, Text } from '@lobehub/ui';
 import React, { memo, Suspense, useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -30,18 +29,35 @@ const Private = memo<PrivateProps>(({ itemKey }) => {
 
   const { openConfigGroupModal } = useAgentModal();
 
-  const { createAgentMenuItem, createGroupChatMenuItem, createSessionGroupMenuItem, isLoading } =
-    useCreateMenuItems();
+  const {
+    createAgentMenuItem,
+    createGroupChatMenuItem,
+    createHeterogeneousAgentMenuItems,
+    createPlatformAgentMenuItem,
+    isLoading,
+  } = useCreateMenuItems();
 
-  const addMenuItems = useMemo(
-    () => [
+  // Mirror the public Agent "+" menu so the create surface is consistent
+  // across both buckets — heterogeneous and platform agents are hard-pinned
+  // to private here. Session-group creation lives in the "More" dropdown.
+  const addMenuItems = useMemo(() => {
+    const heterogeneousItems = createHeterogeneousAgentMenuItems({ visibility: 'private' });
+    const platformItem = createPlatformAgentMenuItem({ visibility: 'private' });
+
+    return [
       createAgentMenuItem({ visibility: 'private' }),
       createGroupChatMenuItem({ visibility: 'private' }),
-      { type: 'divider' as const },
-      createSessionGroupMenuItem({ visibility: 'private' }),
-    ],
-    [createAgentMenuItem, createGroupChatMenuItem, createSessionGroupMenuItem],
-  );
+      ...(heterogeneousItems.length > 0
+        ? [{ type: 'divider' as const }, ...heterogeneousItems]
+        : []),
+      ...(platformItem ? [{ type: 'divider' as const }, platformItem] : []),
+    ];
+  }, [
+    createAgentMenuItem,
+    createGroupChatMenuItem,
+    createHeterogeneousAgentMenuItems,
+    createPlatformAgentMenuItem,
+  ]);
 
   const handleOpenConfigGroupModal = useCallback(() => {
     openConfigGroupModal('private');
@@ -64,7 +80,6 @@ const Private = memo<PrivateProps>(({ itemKey }) => {
       )}
       title={
         <Flexbox horizontal align="center" gap={4}>
-          <Icon icon={LockIcon} size={12} style={{ opacity: 0.5 }} />
           <Text ellipsis fontSize={12} type={'secondary'} weight={500}>
             {t('navPanel.privateAgents', { defaultValue: 'Private' })}
           </Text>

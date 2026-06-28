@@ -199,7 +199,10 @@ export const AgentModalProvider = memo<AgentModalProviderProps>(({ children }) =
         setCreateModalOpen(true);
       },
       openCreatePlatformAgentModal: (options?: OpenCreateModalOptions) => {
-        openCreatePlatformAgentModal({ groupId: options?.groupId });
+        openCreatePlatformAgentModal({
+          groupId: options?.groupId,
+          visibility: options?.visibility,
+        });
       },
       openGroupWizardModal: (callbacks: GroupWizardCallbacks) => {
         setGroupWizardCallbacks(callbacks);

@@ -2,10 +2,15 @@
 
 import { Flexbox } from '@lobehub/ui';
 import isEqual from 'fast-deep-equal';
+import { MoreHorizontal } from 'lucide-react';
 import { memo } from 'react';
+import { useTranslation } from 'react-i18next';
 
+import NavItem from '@/features/NavPanel/components/NavItem';
 import SkeletonList from '@/features/NavPanel/components/SkeletonList';
 import { useFetchAgentList } from '@/hooks/useFetchAgentList';
+import { useGlobalStore } from '@/store/global';
+import { systemStatusSelectors } from '@/store/global/selectors';
 import { useHomeStore } from '@/store/home';
 import { homeAgentListSelectors } from '@/store/home/selectors';
 
@@ -18,9 +23,16 @@ import CreatePrivateButton from './CreatePrivateButton';
 // items the viewer can't see (other members' private rows), so this list
 // is always the viewer's own.
 const PrivateList = memo(() => {
+  const { t } = useTranslation('chat');
   const isInit = useHomeStore(homeAgentListSelectors.isAgentListInit);
   const privateGroups = useHomeStore(homeAgentListSelectors.privateAgentGroups, isEqual);
-  const privateUngrouped = useHomeStore(homeAgentListSelectors.privateUngroupedAgents, isEqual);
+  const privateAgentPageSize = useGlobalStore(systemStatusSelectors.privateAgentPageSize);
+  const privateUngrouped = useHomeStore(
+    homeAgentListSelectors.privateUngroupedAgentsLimited(privateAgentPageSize),
+    isEqual,
+  );
+  const privateUngroupedCount = useHomeStore(homeAgentListSelectors.privateUngroupedAgentsCount);
+  const openAllAgentsDrawer = useHomeStore((s) => s.openAllAgentsDrawer);
 
   useFetchAgentList();
 
@@ -28,6 +40,7 @@ const PrivateList = memo(() => {
 
   const hasGroups = privateGroups.length > 0;
   const hasUngrouped = privateUngrouped.length > 0;
+  const hasMore = privateUngroupedCount > privateAgentPageSize;
 
   // Empty state still surfaces the create-button so a fresh user has an
   // obvious affordance for their first private agent.
@@ -43,6 +56,9 @@ const PrivateList = memo(() => {
     <Flexbox gap={1} paddingBlock={1}>
       {hasGroups && <Group dataSource={privateGroups} />}
       {hasUngrouped && <SessionList dataSource={privateUngrouped} />}
+      {hasMore && (
+        <NavItem icon={MoreHorizontal} title={t('input.more')} onClick={openAllAgentsDrawer} />
+      )}
       <CreatePrivateButton />
     </Flexbox>
   );

@@ -365,6 +365,7 @@
   "navPanel.moveUp": "Move Up",
   "navPanel.pinned": "Pinned",
   "navPanel.privateAgents": "Private",
+  "navPanel.publicAgents": "Public",
   "navPanel.resetDefault": "Reset to Default",
   "navPanel.searchAgent": "Search Agent...",
   "navPanel.searchRecent": "Search Recent...",

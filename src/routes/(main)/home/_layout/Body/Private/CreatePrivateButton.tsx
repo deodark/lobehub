@@ -46,7 +46,7 @@ interface CreatePrivateButtonProps {
 // bucket. Acts as both the visible affordance for the empty private list
 // and the trailing entry for a populated one.
 const CreatePrivateButton = memo<CreatePrivateButtonProps>(({ className }) => {
-  const { t } = useTranslation(['chat', 'common']);
+  const { t } = useTranslation('chat');
   const { allowed: canCreate, reason } = usePermission('create_content');
   const {
     createAgent,
@@ -93,7 +93,7 @@ const CreatePrivateButton = memo<CreatePrivateButtonProps>(({ className }) => {
         )}
       </Center>
       <Text style={{ flex: 1 }} type={'secondary'}>
-        {t('addNew', { defaultValue: 'Add new', ns: 'common' })}
+        {t('newAgent')}
       </Text>
       {canCreate && (
         <Flexbox

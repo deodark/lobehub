@@ -154,7 +154,12 @@ const SortableItem = memo<{
   onToggle: (key: string) => void;
 }>(({ id, hiddenSections, onToggle }) => {
   const { t } = useTranslation('common');
+  const isWorkspaceMode = !!useActiveWorkspaceSlug();
   const item = ITEM_MAP.get(id);
+  // In workspace mode the Agent bucket pairs with Private, so the label
+  // switches to "Public" — mirroring the sidebar header.
+  const labelKey =
+    item?.id === 'agent' && isWorkspaceMode ? 'navPanel.publicAgents' : item?.labelKey;
   const {
     attributes,
     isDragging,
@@ -194,7 +199,7 @@ const SortableItem = memo<{
           <Icon icon={GripVertical} size={14} style={{ color: cssVar.colorTextQuaternary }} />
         </Flexbox>
         {route?.icon && <Icon icon={route.icon} size={18} />}
-        <Text>{t(item.labelKey as any)}</Text>
+        <Text>{t(labelKey as any)}</Text>
       </Flexbox>
       {item.alwaysVisible ? (
         <Tooltip title={t('navPanel.pinned' as any)}>
@@ -300,13 +305,15 @@ const AccordionGroup = memo<{ children: React.ReactNode }>(({ children }) => {
 
 const OverlayItem = memo<{ id: string }>(({ id }) => {
   const { t } = useTranslation('common');
+  const isWorkspaceMode = !!useActiveWorkspaceSlug();
+  const agentLabelKey = isWorkspaceMode ? 'navPanel.publicAgents' : 'navPanel.agent';
 
   // Accordion group overlay: render a compact representation
   if (id === ACCORDION_GROUP_ID) {
     return (
       <Flexbox horizontal align={'center'} className={styles.overlay} gap={8}>
         <Icon icon={GripVertical} size={14} style={{ color: cssVar.colorTextQuaternary }} />
-        <Text>{t('navPanel.agent' as any)}</Text>
+        <Text>{t(agentLabelKey as any)}</Text>
         <Text type={'secondary'}>+ {t('recents' as any)}</Text>
       </Flexbox>
     );
@@ -327,12 +334,13 @@ const OverlayItem = memo<{ id: string }>(({ id }) => {
   const item = ITEM_MAP.get(id);
   if (!item) return null;
   const route = item.routeId ? getRouteById(item.routeId) : undefined;
+  const labelKey = item.id === 'agent' ? agentLabelKey : item.labelKey;
 
   return (
     <Flexbox horizontal align={'center'} className={styles.overlay} gap={8}>
       <Icon icon={GripVertical} size={14} style={{ color: cssVar.colorTextQuaternary }} />
       {route?.icon && <Icon icon={route.icon} size={18} />}
-      <Text>{t(item.labelKey as any)}</Text>
+      <Text>{t(labelKey as any)}</Text>
     </Flexbox>
   );
 });

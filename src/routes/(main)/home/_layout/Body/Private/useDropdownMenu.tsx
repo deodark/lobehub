@@ -1,6 +1,6 @@
 import { type MenuProps } from '@lobehub/ui';
 import { Icon } from '@lobehub/ui';
-import { ArrowDownIcon, ArrowUpIcon, SlidersHorizontalIcon } from 'lucide-react';
+import { ArrowDownIcon, ArrowUpIcon, Hash, LucideCheck, SlidersHorizontalIcon } from 'lucide-react';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -20,11 +20,14 @@ export const usePrivateActionsDropdownMenu = ({
 }: PrivateActionsDropdownMenuProps): MenuProps['items'] => {
   const { t } = useTranslation('common');
 
-  const [sidebarItems, hiddenSections, updateSystemStatus] = useGlobalStore((s) => [
-    systemStatusSelectors.sidebarItems(s),
-    systemStatusSelectors.hiddenSidebarSections(s),
-    s.updateSystemStatus,
-  ]);
+  const [privateAgentPageSize, sidebarItems, hiddenSections, updateSystemStatus] = useGlobalStore(
+    (s) => [
+      systemStatusSelectors.privateAgentPageSize(s),
+      systemStatusSelectors.sidebarItems(s),
+      systemStatusSelectors.hiddenSidebarSections(s),
+      s.updateSystemStatus,
+    ],
+  );
 
   const visibleItems = sidebarItems.filter((k) => !hiddenSections.includes(k));
   const visibleIndex = visibleItems.indexOf('private');
@@ -48,10 +51,27 @@ export const usePrivateActionsDropdownMenu = ({
     const createSessionGroupItem = createSessionGroupMenuItem({ visibility: 'private' });
     const configItem = configMenuItem(openConfigGroupModal);
 
+    const pageSizeOptions = [5, 10, 15, 20];
+    const pageSizeItems = pageSizeOptions.map((size) => ({
+      icon: privateAgentPageSize === size ? <Icon icon={LucideCheck} /> : <div />,
+      key: `pageSize-${size}`,
+      label: t('pageSizeItem', { count: size }),
+      onClick: () => {
+        updateSystemStatus({ privateAgentPageSize: size });
+      },
+    }));
+
     return [
       createSessionGroupItem,
       configItem,
       { type: 'divider' as const },
+      {
+        children: pageSizeItems,
+        extra: privateAgentPageSize,
+        icon: <Icon icon={Hash} />,
+        key: 'show',
+        label: t('navPanel.show'),
+      },
       {
         disabled: isFirst,
         icon: <Icon icon={ArrowUpIcon} />,
@@ -75,6 +95,8 @@ export const usePrivateActionsDropdownMenu = ({
       },
     ].filter(Boolean) as MenuProps['items'];
   }, [
+    privateAgentPageSize,
+    updateSystemStatus,
     createSessionGroupMenuItem,
     configMenuItem,
     openConfigGroupModal,
