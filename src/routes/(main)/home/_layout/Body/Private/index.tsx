@@ -4,7 +4,9 @@ import { AccordionItem, ContextMenuTrigger, Flexbox, Text } from '@lobehub/ui';
 import React, { memo, Suspense, useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
+import NeuralNetworkLoading from '@/components/NeuralNetworkLoading';
 import SkeletonList from '@/features/NavPanel/components/SkeletonList';
+import { useFetchAgentList } from '@/hooks/useFetchAgentList';
 
 import { useCreateMenuItems } from '../../hooks';
 import Actions from '../Agent/Actions';
@@ -26,6 +28,7 @@ interface PrivateProps {
 // the workspace-public Agent section.
 const Private = memo<PrivateProps>(({ itemKey }) => {
   const { t } = useTranslation('common');
+  const { isRevalidating } = useFetchAgentList();
 
   const { openConfigGroupModal } = useAgentModal();
 
@@ -83,6 +86,7 @@ const Private = memo<PrivateProps>(({ itemKey }) => {
           <Text ellipsis fontSize={12} type={'secondary'} weight={500}>
             {t('navPanel.privateAgents', { defaultValue: 'Private' })}
           </Text>
+          {isRevalidating && <NeuralNetworkLoading size={14} />}
         </Flexbox>
       }
     >

@@ -27,7 +27,7 @@ import {
 } from '../../../../../utils/marketOrgSetup';
 import { useDetailContext } from '../../DetailProvider';
 
-const styles = createStaticStyles(({ css }) => ({
+const styles = createStaticStyles(({ css, cssVar }) => ({
   buttonGroup: css`
     width: 100%;
   `,
@@ -37,10 +37,33 @@ const styles = createStaticStyles(({ css }) => ({
     border-start-start-radius: 0 !important;
     border-end-start-radius: 0 !important;
   `,
+  // Match Button type="primary": same dark bg, white text/chevron, flat
+  // right edge so it abuts the action button cleanly. Inline-end border is
+  // removed to avoid a double-border seam between the two halves.
   visibilitySelect: css`
     width: 96px;
+    border-color: ${cssVar.colorPrimary} !important;
+    border-inline-end-width: 0 !important;
     border-start-end-radius: 0 !important;
     border-end-end-radius: 0 !important;
+
+    color: ${cssVar.colorTextLightSolid} !important;
+
+    background: ${cssVar.colorPrimary} !important;
+
+    & svg {
+      color: ${cssVar.colorTextLightSolid};
+    }
+
+    &:hover:not(:disabled) {
+      border-color: ${cssVar.colorPrimaryHover} !important;
+      background: ${cssVar.colorPrimaryHover} !important;
+    }
+
+    &:active:not(:disabled) {
+      border-color: ${cssVar.colorPrimaryActive} !important;
+      background: ${cssVar.colorPrimaryActive} !important;
+    }
   `,
 }));
 
