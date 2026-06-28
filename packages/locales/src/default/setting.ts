@@ -2014,6 +2014,9 @@ When I am ___, I need ___
   'workspace.invitePage.switchAccountToAccept': 'Sign in as {{email}} to accept',
   'workspace.invitePage.signUpToJoin': 'Create account & join',
   'workspace.invitePage.title': 'Workspace Invitation',
+  'workspace.invitePage.viewerLimitSubtitle':
+    'This workspace has reached its viewer limit. Ask an owner to free a viewer seat or upgrade the plan before joining.',
+  'workspace.invitePage.viewerLimitTitle': 'Viewer Limit Reached',
   'workspace.invitePage.workspaceLimitSubtitle':
     "You've reached the maximum of {{limit}} workspaces. Leave one before joining another.",
   'workspace.invitePage.workspaceLimitTitle': 'Workspace Limit Reached',
@@ -2025,6 +2028,8 @@ When I am ___, I need ___
   'workspace.members.invite.errors.alreadyMember':
     '{{email}} is already a member of this workspace.',
   'workspace.members.invite.failed': 'Failed to send invitation',
+  'workspace.members.invite.invitationLimitReached':
+    'This workspace has reached its pending-invitation limit of {{limit}}. Revoke or wait for unused invitations to expire before sending new ones.',
   'workspace.members.invite.limitReached':
     'This workspace can have up to {{limit}} members. Remove a member before inviting more.',
   'workspace.members.invite.roleLabel': 'Role',
