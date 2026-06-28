@@ -1,10 +1,10 @@
 'use client';
 
 import { AGENT_CHAT_URL } from '@lobechat/const';
-import { Button, DropdownMenu, Flexbox, Icon } from '@lobehub/ui';
+import { Button, Flexbox } from '@lobehub/ui';
+import { Select } from '@lobehub/ui/base-ui';
 import { App } from 'antd';
 import { createStaticStyles } from 'antd-style';
-import { ChevronDownIcon } from 'lucide-react';
 import { customAlphabet } from 'nanoid/non-secure';
 import { memo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -31,12 +31,14 @@ const styles = createStaticStyles(({ css }) => ({
   buttonGroup: css`
     width: 100%;
   `,
-  menuButton: css`
-    padding-inline: 8px;
+  forkButton: css`
+    flex: 1;
+    width: unset;
     border-start-start-radius: 0 !important;
     border-end-start-radius: 0 !important;
   `,
-  primaryButton: css`
+  visibilitySelect: css`
+    width: 96px;
     border-start-end-radius: 0 !important;
     border-end-end-radius: 0 !important;
   `,
@@ -67,6 +69,7 @@ const ForkAndChat = memo<{ mobile?: boolean }>(({ mobile }) => {
   const activeWorkspaceId = useActiveWorkspaceId();
   const activeWorkspace = useActiveWorkspace();
   const isWorkspaceOwner = activeWorkspace?.role === 'owner';
+  const [visibility, setVisibility] = useState<ForkTarget>('private');
 
   const meta = {
     avatar,
@@ -82,7 +85,7 @@ const ForkAndChat = memo<{ mobile?: boolean }>(({ mobile }) => {
   // newly-grabbed agents don't surface to teammates before the user has
   // had a chance to vet them.
   const handleForkAndChat = async (target: ForkTarget = 'private') => {
-    if (!canCreate) return;
+    if (!canCreate || isLoading) return;
     // Check if user is authenticated
     if (!isAuthenticated) {
       try {
@@ -217,44 +220,35 @@ const ForkAndChat = memo<{ mobile?: boolean }>(({ mobile }) => {
     );
   }
 
-  // Workspace mode: split button with Private as the default (matches the
-  // sidebar's Private bucket) and an explicit "Fork to Workspace" option
-  // for users who want to share immediately.
-  const menuItems = [
-    {
-      key: 'fork-workspace',
-      label: t('fork.forkToWorkspaceAndChat'),
-      onClick: () => handleForkAndChat('public'),
-    },
+  // Workspace mode: Select on the left chooses Private (default) vs Public,
+  // primary button on the right runs the fork. Keeping the choice next to
+  // the action makes the target visibility explicit at click time.
+  const visibilityOptions = [
+    { label: t('fork.visibilityPrivate'), value: 'private' },
+    { label: t('fork.visibilityPublic'), value: 'public' },
   ];
 
   return (
     <Flexbox horizontal className={styles.buttonGroup} gap={0}>
+      <Select
+        className={styles.visibilitySelect}
+        disabled={!canCreate || isLoading}
+        options={visibilityOptions}
+        size={'large'}
+        value={visibility}
+        onChange={(v) => setVisibility(v as ForkTarget)}
+      />
       <Button
         block
-        className={styles.primaryButton}
+        className={styles.forkButton}
         disabled={!canCreate}
         loading={isLoading}
         size={'large'}
-        style={{ flex: 1, width: 'unset' }}
         type={'primary'}
-        onClick={() => handleForkAndChat('private')}
+        onClick={() => handleForkAndChat(visibility)}
       >
-        {t('fork.forkToPrivateAndChat')}
+        {t('fork.forkAndChat')}
       </Button>
-      <DropdownMenu
-        items={menuItems}
-        popupProps={{ style: { minWidth: 240 } }}
-        triggerProps={{ disabled: isLoading || !canCreate }}
-      >
-        <Button
-          className={styles.menuButton}
-          disabled={isLoading || !canCreate}
-          icon={<Icon icon={ChevronDownIcon} />}
-          size={'large'}
-          type={'primary'}
-        />
-      </DropdownMenu>
     </Flexbox>
   );
 });

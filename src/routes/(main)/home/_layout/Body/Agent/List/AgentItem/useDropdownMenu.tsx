@@ -55,7 +55,16 @@ export const useAgentDropdownMenu = ({
   const { message } = App.useApp();
 
   const openAgentInNewWindow = useGlobalStore((s) => s.openAgentInNewWindow);
-  const sessionCustomGroups = useHomeStore(homeAgentListSelectors.agentGroups, isEqual);
+  // Pick the group bucket that matches this agent's visibility so the
+  // "Move to group" picker only offers same-scope targets — moving a private
+  // agent into a public group (or vice versa) would orphan it from the view
+  // it currently lives in.
+  const sessionCustomGroups = useHomeStore(
+    visibility === 'private'
+      ? homeAgentListSelectors.privateAgentGroups
+      : homeAgentListSelectors.agentGroups,
+    isEqual,
+  );
   const refreshAgentList = useHomeStore((s) => s.refreshAgentList);
   const [pinAgent, duplicateAgent, updateAgentGroup, removeAgent] = useHomeStore((s) => [
     s.pinAgent,

@@ -126,8 +126,8 @@ const AgentItem = memo<AgentItemProps>(({ item, style, className, onNavigate }) 
   );
 
   const handleOpenCreateGroupModal = useCallback(() => {
-    openCreateGroupModal(id);
-  }, [id, openCreateGroupModal]);
+    openCreateGroupModal(id, visibility);
+  }, [id, openCreateGroupModal, visibility]);
 
   // Memoize pin icon
   const pinIcon = useMemo(

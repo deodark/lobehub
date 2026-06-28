@@ -29,8 +29,8 @@ const GroupItem = memo<SidebarGroup>(({ items, id, name, visibility }) => {
   const { isLoading } = useCreateMenuItems();
 
   const handleOpenConfigGroupModal = useCallback(() => {
-    openConfigGroupModal();
-  }, [openConfigGroupModal]);
+    openConfigGroupModal(visibility);
+  }, [openConfigGroupModal, visibility]);
 
   const dropdownMenu = useGroupDropdownMenu({
     anchor,

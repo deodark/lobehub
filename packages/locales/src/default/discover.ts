@@ -156,9 +156,6 @@ export default {
   // Fork related
   'fork.forkAndChat': 'Fork & Chat',
 
-  'fork.forkToPrivateAndChat': 'Fork to Private & Chat',
-  'fork.forkToWorkspaceAndChat': 'Fork to Workspace & Chat',
-
   'fork.forkedFrom': 'Forked from',
 
   'fork.forks': 'forks',
@@ -177,6 +174,9 @@ export default {
   'fork.success': 'Forked successfully!',
 
   'fork.viewAllForks': 'View all forks',
+
+  'fork.visibilityPrivate': 'Private',
+  'fork.visibilityPublic': 'Public',
 
   'groupAgents.tag': 'Group',
 
