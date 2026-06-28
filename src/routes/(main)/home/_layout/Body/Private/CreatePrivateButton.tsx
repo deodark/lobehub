@@ -52,16 +52,19 @@ const CreatePrivateButton = memo<CreatePrivateButtonProps>(({ className }) => {
     createAgent,
     createAgentMenuItem,
     createGroupChatMenuItem,
+    createPlatformAgentMenuItem,
     isMutatingAgent,
     openCreateModal,
   } = useCreateMenuItems();
 
   const dropdownItems = useMemo(() => {
+    const platformItem = createPlatformAgentMenuItem({ visibility: 'private' });
     return [
       createAgentMenuItem({ visibility: 'private' }),
       createGroupChatMenuItem({ visibility: 'private' }),
+      ...(platformItem ? [{ type: 'divider' as const }, platformItem] : []),
     ];
-  }, [createAgentMenuItem, createGroupChatMenuItem]);
+  }, [createAgentMenuItem, createGroupChatMenuItem, createPlatformAgentMenuItem]);
 
   const handleClick = () => {
     if (!canCreate) return;

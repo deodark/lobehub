@@ -29,14 +29,15 @@ import { memo, useCallback, useMemo, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
 
+import { useActiveWorkspaceId } from '@/business/client/hooks/useActiveWorkspaceId';
 import { useActiveWorkspaceSlug } from '@/business/client/hooks/useActiveWorkspaceSlug';
 import { getRouteById } from '@/config/routes';
 import { useGlobalStore } from '@/store/global';
 import { DEFAULT_HOME_SIDEBAR_EXPANDED_KEYS } from '@/store/global/initialState';
 import { systemStatusSelectors } from '@/store/global/selectors';
 import {
-  DEFAULT_HIDDEN_SECTIONS,
   DEFAULT_SIDEBAR_ITEMS,
+  getDefaultHiddenSections,
   SIDEBAR_ACCORDION_KEYS,
   SIDEBAR_SPACER_ID,
 } from '@/store/global/selectors/systemStatus';
@@ -360,11 +361,12 @@ const flattenItems = (outer: string[], inner: string[], bindSpacerToAccordion: b
 const CustomizeSidebarContent = memo(() => {
   const { close } = useModalContext();
   const { t: commonT } = useTranslation('common');
-  const [storeItems, storeHiddenSections, updateSystemStatus] = useGlobalStore((s) => [
-    systemStatusSelectors.sidebarItems(s),
-    systemStatusSelectors.hiddenSidebarSections(s),
-    s.updateSystemStatus,
-  ]);
+  const activeWorkspaceId = useActiveWorkspaceId();
+  const storeItems = useGlobalStore(systemStatusSelectors.sidebarItems(activeWorkspaceId));
+  const storeHiddenSections = useGlobalStore(
+    systemStatusSelectors.hiddenSidebarSections(activeWorkspaceId),
+  );
+  const updateSystemStatus = useGlobalStore((s) => s.updateSystemStatus);
   const isWorkspaceMode = !!useActiveWorkspaceSlug();
   const sortableItemIds = useMemo(
     () => getSortableSidebarItemIds(isWorkspaceMode),
@@ -424,9 +426,9 @@ const CustomizeSidebarContent = memo(() => {
 
   const handleResetDefault = useCallback(() => {
     setItems(DEFAULT_SIDEBAR_ITEMS.filter((id) => sortableItemIds.has(id)));
-    setHiddenSections(DEFAULT_HIDDEN_SECTIONS);
+    setHiddenSections(getDefaultHiddenSections(isWorkspaceMode));
     setShouldResetExpandedKeys(true);
-  }, [sortableItemIds]);
+  }, [sortableItemIds, isWorkspaceMode]);
 
   const handleConfirm = useCallback(() => {
     updateSystemStatus(

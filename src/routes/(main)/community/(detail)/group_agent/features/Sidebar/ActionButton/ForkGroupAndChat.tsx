@@ -8,15 +8,21 @@ import { memo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import urlJoin from 'url-join';
 
+import { useActiveWorkspace } from '@/business/client/hooks/useActiveWorkspace';
 import { useActiveWorkspaceId } from '@/business/client/hooks/useActiveWorkspaceId';
 import { useWorkspaceAwareNavigate } from '@/features/Workspace/useWorkspaceAwareNavigate';
 import { usePermission } from '@/hooks/usePermission';
 import { useMarketAuth } from '@/layout/AuthProvider/MarketAuth';
+import { lambdaClient } from '@/libs/trpc/client';
 import { chatGroupService } from '@/services/chatGroup';
 import { discoverService } from '@/services/discover';
 import { marketApiService } from '@/services/marketApi';
 import { useAgentGroupStore } from '@/store/agentGroup';
 
+import {
+  isMarketOrgSetupRequiredError,
+  promptMarketOrgSetup,
+} from '../../../../../utils/marketOrgSetup';
 import { useDetailContext } from '../../DetailProvider';
 
 const styles = createStaticStyles(({ css }) => ({
@@ -53,6 +59,8 @@ const ForkGroupAndChat = memo<{ mobile?: boolean }>(() => {
   const { isAuthenticated, signIn } = useMarketAuth();
   const { allowed: canCreate } = usePermission('create_content');
   const activeWorkspaceId = useActiveWorkspaceId();
+  const activeWorkspace = useActiveWorkspace();
+  const isWorkspaceOwner = activeWorkspace?.role === 'owner';
 
   const meta = {
     avatar,
@@ -96,10 +104,28 @@ const ForkGroupAndChat = memo<{ mobile?: boolean }>(() => {
       // Generate a unique identifier for the forked group
       const newIdentifier = generateMarketIdentifier();
 
-      // Workspace forks default to the user's Private bucket, so we keep the
-      // market-side fork on the actor's personal account. See the matching
-      // comment in `ForkAndChat.tsx` for the rationale.
-      const actAs: number | undefined = undefined;
+      // Same rationale as ForkAndChat.tsx — workspace forks must carry an
+      // org `actAs` so Market accepts the request; the local chat group
+      // still lands in the user's Private bucket via `visibility: 'private'`
+      // on the groupConfig below. When the workspace has no Community
+      // profile yet we prompt the user (role-aware) and abort the fork.
+      let actAs: number | undefined;
+      if (activeWorkspaceId) {
+        try {
+          const { marketAccountId } =
+            await lambdaClient.workspace.ensureMarketOrganization.mutate();
+          actAs = marketAccountId;
+        } catch (error) {
+          if (isMarketOrgSetupRequiredError(error)) {
+            promptMarketOrgSetup({
+              isOwner: isWorkspaceOwner,
+              onSetup: () => navigate('/community/workspace'),
+            });
+            return;
+          }
+          throw error;
+        }
+      }
 
       // Step 2: Fork the group via Market API
       const forkResult = await marketApiService.forkAgentGroup(identifier!, {

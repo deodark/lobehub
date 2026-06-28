@@ -67,14 +67,18 @@ const Body = memo(() => {
   const tab = useActiveTabKey();
   const navigate = useWorkspaceAwareNavigate();
   const { topNavItems, bottomMenuItems } = useNavLayout();
-  const sidebarItems = useGlobalStore(systemStatusSelectors.sidebarItems);
-  const sidebarExpandedKeys = useGlobalStore(systemStatusSelectors.sidebarExpandedKeys);
-  const hiddenSections = useGlobalStore(systemStatusSelectors.hiddenSidebarSections);
-  const updateSystemStatus = useGlobalStore((s) => s.updateSystemStatus);
   // Personal mode has no notion of "private vs workspace-public" — every row
   // is implicitly the owner's. Hide the Private section entirely there so the
   // sidebar doesn't sprout an empty accordion users can't populate.
   const activeWorkspaceId = useActiveWorkspaceId();
+  const sidebarItems = useGlobalStore(systemStatusSelectors.sidebarItems(activeWorkspaceId));
+  const sidebarExpandedKeys = useGlobalStore(
+    systemStatusSelectors.sidebarExpandedKeys(activeWorkspaceId),
+  );
+  const hiddenSections = useGlobalStore(
+    systemStatusSelectors.hiddenSidebarSections(activeWorkspaceId),
+  );
+  const updateSystemStatus = useGlobalStore((s) => s.updateSystemStatus);
 
   const hideSection = useCallback(
     (key: string) => {

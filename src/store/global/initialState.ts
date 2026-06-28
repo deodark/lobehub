@@ -298,7 +298,34 @@ export interface SystemStatus {
    * can switch the panel to "review" when revealing the right panel.
    */
   workingSidebarTab?: WorkingSidebarTab;
+  /**
+   * Workspace-mode overlay for sidebar layout/visibility preferences.
+   * When the user is inside a workspace (see `useActiveWorkspaceId`), reads
+   * fall back to these values instead of the top-level fields, and writes
+   * to whitelisted fields land here. Top-level fields stay as the personal
+   * (no-workspace) preference, so switching modes does not bleed state.
+   * Single shared bucket across all workspaces — not keyed by workspaceId.
+   */
+  workspace?: Partial<Pick<SystemStatus, WorkspaceOverridableField>>;
 }
+
+/**
+ * Fields whose preference is meaningfully different between personal mode
+ * and workspace mode (e.g. workspace-only sidebar entries like the Private
+ * group, or product-driven defaults like hiding Recents in a workspace).
+ * Writes to these fields are routed to `status.workspace.*` when the user is
+ * inside a workspace; reads fall back to the top-level value when the
+ * overlay is empty.
+ */
+export type WorkspaceOverridableField =
+  'expandSessionGroupKeys' | 'hiddenSidebarSections' | 'sidebarExpandedKeys' | 'sidebarItems';
+
+export const WORKSPACE_OVERRIDABLE_FIELDS = [
+  'expandSessionGroupKeys',
+  'hiddenSidebarSections',
+  'sidebarExpandedKeys',
+  'sidebarItems',
+] as const satisfies readonly WorkspaceOverridableField[];
 
 export interface GlobalNavigationRef {
   current: NavigateFunction | null;

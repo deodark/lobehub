@@ -8,16 +8,22 @@ import { customAlphabet } from 'nanoid/non-secure';
 import { memo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
+import { useActiveWorkspace } from '@/business/client/hooks/useActiveWorkspace';
 import { useActiveWorkspaceId } from '@/business/client/hooks/useActiveWorkspaceId';
 import { useWorkspaceAwareNavigate } from '@/features/Workspace/useWorkspaceAwareNavigate';
 import { usePermission } from '@/hooks/usePermission';
 import { useMarketAuth } from '@/layout/AuthProvider/MarketAuth';
+import { lambdaClient } from '@/libs/trpc/client';
 import { agentService } from '@/services/agent';
 import { discoverService } from '@/services/discover';
 import { marketApiService } from '@/services/marketApi';
 import { useAgentStore } from '@/store/agent';
 import { useHomeStore } from '@/store/home';
 
+import {
+  isMarketOrgSetupRequiredError,
+  promptMarketOrgSetup,
+} from '../../../../../utils/marketOrgSetup';
 import { useDetailContext } from '../../DetailProvider';
 
 const styles = createStaticStyles(({ css }) => ({
@@ -47,6 +53,8 @@ const ForkAndChat = memo<{ mobile?: boolean }>(({ mobile }) => {
   const { isAuthenticated, signIn } = useMarketAuth();
   const { allowed: canCreate } = usePermission('create_content');
   const activeWorkspaceId = useActiveWorkspaceId();
+  const activeWorkspace = useActiveWorkspace();
+  const isWorkspaceOwner = activeWorkspace?.role === 'owner';
 
   const meta = {
     avatar,
@@ -84,13 +92,35 @@ const ForkAndChat = memo<{ mobile?: boolean }>(({ mobile }) => {
       // Generate a unique identifier for the forked agent
       const newIdentifier = generateMarketIdentifier();
 
-      // Workspace forks land in the user's Private bucket by default, so the
-      // market-side fork stays attributed to the actor (their personal Market
-      // account). Org attribution via `ensureMarketOrganization` is reserved
-      // for the workspace-public path — wiring it in here would also require
-      // a community profile to be set up before the user can fork, which
-      // breaks the otherwise-frictionless "fork to my Private" UX.
-      const actAs: number | undefined = undefined;
+      // Workspace mode forks must be attributed to the workspace's Market
+      // organization mirror — the per-user trust token always carries the
+      // workspaceId, so Market rejects the request without
+      // `x-lobe-owner-account-id` (403). The local agent still lands in the
+      // user's Private bucket via `visibility: 'private'` below; "Publish to
+      // Workspace" promotes it later.
+      //
+      // When the workspace has no Community profile yet we abort and prompt
+      // the user instead of falling through to a doomed personal-fork
+      // attempt (the trust token can't shed its workspaceId from the
+      // client). Owners get a deep-link CTA; everyone else is asked to
+      // contact the owner.
+      let actAs: number | undefined;
+      if (activeWorkspaceId) {
+        try {
+          const { marketAccountId } =
+            await lambdaClient.workspace.ensureMarketOrganization.mutate();
+          actAs = marketAccountId;
+        } catch (error) {
+          if (isMarketOrgSetupRequiredError(error)) {
+            promptMarketOrgSetup({
+              isOwner: isWorkspaceOwner,
+              onSetup: () => navigate('/community/workspace'),
+            });
+            return;
+          }
+          throw error;
+        }
+      }
 
       // Step 2: Fork the agent via Market API (single-item batch)
       const [forkOutcome] = await marketApiService.forkAgent([
