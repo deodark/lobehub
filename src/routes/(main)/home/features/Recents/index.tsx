@@ -27,8 +27,6 @@ import { openCustomizeSidebarModal } from '@/routes/(main)/home/_layout/Body/Cus
 import { useGlobalStore } from '@/store/global';
 import { systemStatusSelectors } from '@/store/global/selectors';
 import { reorderSidebarItems } from '@/store/global/selectors/systemStatus';
-import { useHomeStore } from '@/store/home';
-import { homeRecentSelectors } from '@/store/home/selectors';
 import { useUserStore } from '@/store/user';
 import { authSelectors } from '@/store/user/slices/auth/selectors';
 
@@ -40,10 +38,8 @@ interface RecentsProps {
 
 const Recents = memo<RecentsProps>(({ itemKey }) => {
   const { t } = useTranslation('common');
-  const recents = useHomeStore(homeRecentSelectors.recents);
-  const isInit = useHomeStore(homeRecentSelectors.isRecentsInit);
   const isLogin = useUserStore(authSelectors.isLogin);
-  const { isRevalidating } = useInitRecents();
+  const { data: recents, isRevalidating } = useInitRecents();
 
   const [recentPageSize, sidebarItems, hiddenSections, updateSystemStatus] = useGlobalStore((s) => [
     systemStatusSelectors.recentPageSize(s),
@@ -132,7 +128,7 @@ const Recents = memo<RecentsProps>(({ itemKey }) => {
   ]);
 
   if (!isLogin) return null;
-  if (isInit && (!recents || recents.length === 0)) return null;
+  if (recents && recents.length === 0) return null;
 
   return (
     <AccordionItem
@@ -157,7 +153,7 @@ const Recents = memo<RecentsProps>(({ itemKey }) => {
       }
     >
       <Suspense fallback={<SkeletonList rows={3} />}>
-        <RecentsList />
+        <RecentsList recents={recents} />
       </Suspense>
     </AccordionItem>
   );

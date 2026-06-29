@@ -7,18 +7,22 @@ import { taskDetailPath } from '@/features/AgentTasks/shared/taskDetailPath';
 import NavItem from '@/features/NavPanel/components/NavItem';
 import SkeletonList from '@/features/NavPanel/components/SkeletonList';
 import WorkspaceLink from '@/features/Workspace/WorkspaceLink';
+import { type RecentItem } from '@/server/routers/lambda/recent';
 import { useGlobalStore } from '@/store/global';
 import { systemStatusSelectors } from '@/store/global/selectors';
 import { useHomeStore } from '@/store/home';
-import { homeRecentSelectors } from '@/store/home/selectors';
 
 import AllRecentsDrawer from './AllRecentsDrawer';
 import RecentListItem from './Item';
 
-const RecentsList = memo(() => {
+const EMPTY_RECENTS: RecentItem[] = [];
+
+interface RecentsListProps {
+  recents?: RecentItem[];
+}
+
+const RecentsList = memo<RecentsListProps>(({ recents }) => {
   const { t } = useTranslation('chat');
-  const recents = useHomeStore(homeRecentSelectors.recents);
-  const isInit = useHomeStore(homeRecentSelectors.isRecentsInit);
   const recentPageSize = useGlobalStore(systemStatusSelectors.recentPageSize);
   const [drawerOpen, openDrawer, closeDrawer] = useHomeStore((s) => [
     s.allRecentsDrawerOpen,
@@ -26,8 +30,9 @@ const RecentsList = memo(() => {
     s.closeAllRecentsDrawer,
   ]);
 
-  const displayItems = useMemo(() => recents.slice(0, recentPageSize), [recents, recentPageSize]);
-  const hasMore = recents.length > recentPageSize;
+  const list = recents ?? EMPTY_RECENTS;
+  const displayItems = useMemo(() => list.slice(0, recentPageSize), [list, recentPageSize]);
+  const hasMore = list.length > recentPageSize;
 
   const getRecentRoute = useCallback((item: (typeof displayItems)[number]) => {
     if (item.type !== 'task') return item.routePath;
@@ -37,7 +42,7 @@ const RecentsList = memo(() => {
     return taskDetailPath(taskId, item.agentId ?? undefined);
   }, []);
 
-  if (!isInit) {
+  if (!recents) {
     return <SkeletonList rows={3} />;
   }
 
