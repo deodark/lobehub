@@ -435,6 +435,7 @@ export class StreamingExecutorActionImpl {
     parentOperationId?: string;
     skipCreateFirstMessage?: boolean;
     isSubAgent?: boolean;
+    userMessageId?: string;
   }): Promise<{ cost?: Cost; model?: string; provider?: string; usage?: Usage } | void> => {
     const {
       disableTools,
@@ -575,6 +576,7 @@ export class StreamingExecutorActionImpl {
         parentId: params.parentMessageId,
         skipCreateFirstMessage: params.skipCreateFirstMessage,
         toolsEngine, // Pass toolsEngine for dynamic tool injection via activateTools
+        userMessageId: params.userMessageId,
       }),
       getOperation: (opId: string) => {
         const op = this.#get().operations[opId];
@@ -903,6 +905,7 @@ export class StreamingExecutorActionImpl {
         parentMessageId: userMessageId,
         parentMessageType: 'user',
         parentOperationId,
+        userMessageId,
       });
 
       // 7. Extract the sub-agent's final assistant output as the tool result

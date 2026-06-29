@@ -319,36 +319,6 @@ const attachWorkSourceMessage = async ({
   }
 };
 
-const attachWorkDisplayAnchorAssistantMessage = async ({
-  displayAnchorAssistantMessageId,
-  rootOperationId,
-  serverDB,
-  userId,
-  workspaceId,
-}: {
-  displayAnchorAssistantMessageId?: string;
-  rootOperationId?: string;
-  serverDB: LobeChatDatabase;
-  userId?: string;
-  workspaceId?: string;
-}) => {
-  if (!displayAnchorAssistantMessageId || !rootOperationId || !userId) return;
-
-  try {
-    await new WorkModel(serverDB, userId, workspaceId).attachDisplayAnchorAssistantMessage({
-      displayAnchorAssistantMessageId,
-      rootOperationId,
-    });
-  } catch (error) {
-    log(
-      'attachWorkDisplayAnchorAssistantMessage failed for rootOperationId=%s messageId=%s: %O',
-      rootOperationId,
-      displayAnchorAssistantMessageId,
-      error,
-    );
-  }
-};
-
 // Builds a postProcessUrl callback that resolves keys in file-backed fields
 // (imageList, videoList, fileList) to externally accessible URLs. Must be
 // passed to every messageModel.query() call whose output is later fed to the
@@ -2156,6 +2126,29 @@ export const createRuntimeExecutors = (
                 if (answerSalvagedFromReasoning) {
                   metadata.answerSalvagedFromReasoning = true;
                 }
+                const sourceMessageId = state.metadata?.sourceMessageId;
+                const sourceMessageIndex =
+                  typeof sourceMessageId === 'string'
+                    ? state.messages.findIndex((message) => message.id === sourceMessageId)
+                    : -1;
+                // Only inspect the current turn; older tool calls must not mark unrelated replies.
+                const currentOperationMessages =
+                  sourceMessageIndex >= 0 ? state.messages.slice(sourceMessageIndex + 1) : [];
+                const hasPriorToolInteraction = currentOperationMessages.some(
+                  (message) =>
+                    message.role === 'tool' ||
+                    (Array.isArray(message.tool_calls) && message.tool_calls.length > 0),
+                );
+                if (
+                  toolsCalling.length === 0 &&
+                  tool_calls.length === 0 &&
+                  hasPriorToolInteraction
+                ) {
+                  metadata.work = {
+                    rootOperationId: operationId,
+                    ...(typeof sourceMessageId === 'string' && { userMessageId: sourceMessageId }),
+                  };
+                }
 
                 // Sanitize tool_call `arguments` before persisting to DB so malformed
                 // JSON (e.g. Qwen emitting `{, ...}`) can't poison future context
@@ -2175,13 +2168,6 @@ export const createRuntimeExecutors = (
                   reasoning: finalReasoning,
                   search: grounding,
                   tools: persistedTools,
-                });
-                await attachWorkDisplayAnchorAssistantMessage({
-                  displayAnchorAssistantMessageId: assistantMessageItem.id,
-                  rootOperationId: operationId,
-                  serverDB: ctx.serverDB,
-                  userId: ctx.userId,
-                  workspaceId: state.metadata?.workspaceId ?? ctx.workspaceId,
                 });
               } catch (error) {
                 console.error('[call_llm] Failed to update message:', error);

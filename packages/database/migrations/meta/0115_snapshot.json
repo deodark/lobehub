@@ -6,7 +6,7 @@
   },
   "dialect": "postgresql",
   "enums": {},
-  "id": "aaf05f6b-5c03-4721-8e70-65d4c9a1808a",
+  "id": "e8730f16-9f4b-4008-9887-93ff6dee72f7",
   "policies": {},
   "prevId": "d65bcc8b-fc15-41e7-8678-0c9d603f213d",
   "roles": {},
@@ -21429,12 +21429,6 @@
           "primaryKey": false,
           "notNull": false
         },
-        "display_anchor_assistant_message_id": {
-          "name": "display_anchor_assistant_message_id",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false
-        },
         "root_operation_id": {
           "name": "root_operation_id",
           "type": "text",
@@ -21571,21 +21565,6 @@
           "method": "btree",
           "with": {}
         },
-        "work_contexts_display_anchor_assistant_message_id_idx": {
-          "name": "work_contexts_display_anchor_assistant_message_id_idx",
-          "columns": [
-            {
-              "expression": "display_anchor_assistant_message_id",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        },
         "work_contexts_root_operation_id_idx": {
           "name": "work_contexts_root_operation_id_idx",
           "columns": [
@@ -21710,15 +21689,6 @@
           "tableFrom": "work_contexts",
           "tableTo": "messages",
           "columnsFrom": ["source_message_id"],
-          "columnsTo": ["id"],
-          "onDelete": "set null",
-          "onUpdate": "no action"
-        },
-        "work_contexts_display_anchor_assistant_message_id_messages_id_fk": {
-          "name": "work_contexts_display_anchor_assistant_message_id_messages_id_fk",
-          "tableFrom": "work_contexts",
-          "tableTo": "messages",
-          "columnsFrom": ["display_anchor_assistant_message_id"],
           "columnsTo": ["id"],
           "onDelete": "set null",
           "onUpdate": "no action"
