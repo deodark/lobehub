@@ -2054,6 +2054,13 @@ When I am ___, I need ___
     'This workspace has reached its pending-invitation limit of {{limit}}. Revoke or wait for unused invitations to expire before sending new ones.',
   'workspace.members.invite.limitReached':
     'This workspace can have up to {{limit}} members. Remove a member before inviting more.',
+  'workspace.members.invite.askOwnerToBuySeats':
+    'Ask the workspace owner to purchase more seats before inviting new members.',
+  'workspace.members.invite.buySeatsCta': 'Buy seats',
+  'workspace.members.invite.seatInsufficient':
+    'Only {{remaining}} seat(s) remaining. Buy more seats to invite {{required}} new member(s).',
+  'workspace.members.invite.seatInsufficientNoBuy':
+    'Only {{remaining}} seat(s) remaining. Ask the workspace owner to purchase more seats.',
   'workspace.members.invite.roleLabel': 'Role',
   'workspace.members.invite.submit': 'Invite',
   'workspace.members.invite.subtitle':
@@ -2124,12 +2131,8 @@ When I am ___, I need ___
   'workspace.upgradeModal.successPage.amountLabel': 'Total paid',
   'workspace.upgradeModal.successPage.activating':
     'Activating your subscription — this usually takes a few seconds…',
-  'workspace.upgradeModal.successPage.continueCta': 'Invite & continue',
-  'workspace.upgradeModal.successPage.desc':
-    '{{name}} is now on Pro. Invite teammates to start collaborating.',
-  'workspace.upgradeModal.successPage.inviteDesc':
-    'Send invites by email. They will receive a link to join the workspace.',
-  'workspace.upgradeModal.successPage.inviteTitle': 'Invite teammates to {{name}}',
+  'workspace.upgradeModal.successPage.desc': '{{name}} is now on Pro.',
+  'workspace.upgradeModal.successPage.enterCta': 'Enter workspace',
   'workspace.upgradeModal.successPage.paidAtLabel': 'Paid at',
   'workspace.upgradeModal.successPage.planTag': 'Workspace Pro',
   'workspace.upgradeModal.successPage.processingDesc':
@@ -2140,7 +2143,6 @@ When I am ___, I need ___
   'workspace.upgradeModal.successPage.recurringLabel': 'Billing cycle',
   'workspace.upgradeModal.successPage.seatsSummary': '{{count}} included seat',
   'workspace.upgradeModal.successPage.seatsSummary_other': '{{count}} included seats',
-  'workspace.upgradeModal.successPage.skipCta': 'Skip for now',
   'workspace.upgradeModal.successPage.title': 'Upgrade complete',
   'workspace.upgradeModal.successToast': 'Upgrade complete — refreshing your plan…',
   'workspace.upgradeModal.title': 'Upgrade workspace',
