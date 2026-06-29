@@ -9,35 +9,49 @@ import { isSelectableRole } from './selectableRoles';
 import SelectCircle from './SelectCircle';
 
 const styles = createStaticStyles(({ css }) => ({
-  // Content is non-interactive while selecting — the whole row is the toggle.
+  // Nudge the circle down so it lines up with the message's first line instead
+  // of floating at the very top of the row.
+  checkbox: css`
+    flex: none;
+    padding-block-start: 6px;
+  `,
   content: css`
+    /* Content is non-interactive while selecting — the whole row is the toggle. */
     pointer-events: none;
     flex: 1;
     min-width: 0;
+
+    /* The hover action bar is suppressed in selection mode, so collapse its 28px
+       placeholder too — otherwise every selected row carries a big empty
+       highlighted strip beneath the bubble. */
+    [data-user-action-bar-portal],
+    [data-assitant-action-bar-portal],
+    [data-assistant-group-action-bar-portal] {
+      display: none;
+    }
   `,
   disabled: css`
     cursor: not-allowed;
     opacity: 0.4;
   `,
-  // Full-width single-row band, WeChat-style: highlight spans the whole row.
+  // Full-width single-row band, WeChat-style. Kept light: selection uses the
+  // weakest fill (the filled circle is the real indicator); hover is one notch
+  // up purely for transient feedback.
   row: css`
     cursor: pointer;
-
     inline-size: 100%;
-    padding-block: 4px;
     padding-inline: 12px;
-
     transition: background-color 0.1s ${cssVar.motionEaseInOut};
 
     &:hover {
-      background-color: ${cssVar.colorFillQuaternary};
+      background-color: ${cssVar.colorFillTertiary};
     }
   `,
   rowSelected: css`
-    background-color: ${cssVar.colorFillSecondary};
+    background-color: ${cssVar.colorFillQuaternary};
 
     &:hover {
-      background-color: ${cssVar.colorFillSecondary};
+      background-color: ${cssVar.colorFillQuaternary};
     }
   `,
 }));
@@ -50,8 +64,8 @@ interface MessageSelectionWrapperProps {
 
 /**
  * In multi-select mode, wraps a message with a leading round checkbox and turns
- * the whole full-width row into a single toggle target (selected rows get a
- * banner highlight). Outside selection mode it renders the message untouched.
+ * the whole full-width row into a single toggle target. Outside selection mode
+ * it renders the message untouched.
  */
 const MessageSelectionWrapper = memo<MessageSelectionWrapperProps>(({ children, id, role }) => {
   const isSelectionMode = useConversationStore(messageStateSelectors.isSelectionMode);
@@ -74,12 +88,14 @@ const MessageSelectionWrapper = memo<MessageSelectionWrapperProps>(({ children, 
   return (
     <Flexbox
       horizontal
-      align={'center'}
+      align={'flex-start'}
       className={cx(styles.row, isSelected && styles.rowSelected)}
-      gap={12}
+      gap={8}
       onClick={handleToggle}
     >
-      <SelectCircle checked={isSelected} />
+      <div className={styles.checkbox}>
+        <SelectCircle checked={isSelected} />
+      </div>
       <div className={styles.content}>{children}</div>
     </Flexbox>
   );
