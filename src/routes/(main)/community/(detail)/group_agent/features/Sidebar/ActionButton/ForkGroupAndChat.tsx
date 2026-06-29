@@ -43,7 +43,7 @@ const styles = createStaticStyles(({ css, cssVar }) => ({
   // semantically-named colorTextLightSolid because the cssVar proxy doesn't
   // pick up LobeHub's JS-level override of that token.
   visibilitySelect: css`
-    width: 112px;
+    width: 130px;
     border-color: ${cssVar.colorPrimary} !important;
     border-inline-end-width: 0 !important;
     border-start-end-radius: 0 !important;

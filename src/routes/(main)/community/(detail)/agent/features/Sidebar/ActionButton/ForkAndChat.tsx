@@ -1,8 +1,8 @@
 'use client';
 
 import { AGENT_CHAT_URL } from '@lobechat/const';
-import { Button, Flexbox } from '@lobehub/ui';
-import { Select } from '@lobehub/ui/base-ui';
+import { Flexbox } from '@lobehub/ui';
+import { Button, Select } from '@lobehub/ui/base-ui';
 import { App } from 'antd';
 import { createStaticStyles } from 'antd-style';
 import { customAlphabet } from 'nanoid/non-secure';
@@ -44,7 +44,7 @@ const styles = createStaticStyles(({ css, cssVar }) => ({
   // semantically-named colorTextLightSolid because the cssVar proxy doesn't
   // pick up LobeHub's JS-level override of that token.
   visibilitySelect: css`
-    width: 112px;
+    width: 130px;
     border-color: ${cssVar.colorPrimary} !important;
     border-inline-end-width: 0 !important;
     border-start-end-radius: 0 !important;
