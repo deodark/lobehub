@@ -2132,7 +2132,6 @@ When I am ___, I need ___
   'workspace.upgradeModal.successPage.activating':
     'Activating your subscription — this usually takes a few seconds…',
   'workspace.upgradeModal.successPage.desc': '{{name}} is now on Pro.',
-  'workspace.upgradeModal.successPage.enterCta': 'Enter workspace',
   'workspace.upgradeModal.successPage.paidAtLabel': 'Paid at',
   'workspace.upgradeModal.successPage.planTag': 'Workspace Pro',
   'workspace.upgradeModal.successPage.processingDesc':
@@ -2360,6 +2359,8 @@ When I am ___, I need ___
   'workspace.onboarding.step4Invite.finish': 'Finish',
   'workspace.onboarding.step4Invite.heading': 'Invite your team',
   'workspace.onboarding.step4Invite.invitedCount': 'Invited {{count}} member(s)',
+  'workspace.onboarding.step4Invite.seatLimitReached':
+    'You can invite up to {{max}} teammate(s) with your current seats.',
   'workspace.onboarding.step4Invite.subtitle':
     'Bring teammates into this workspace now, or invite them later from member settings.',
   'workspace.onboarding.step4Invite.subtitleWithExtraSeats':
