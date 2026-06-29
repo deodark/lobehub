@@ -1,46 +1,39 @@
 'use client';
 
 import { Flexbox } from '@lobehub/ui';
-import { Checkbox } from 'antd';
 import { createStaticStyles, cssVar, cx } from 'antd-style';
 import { memo, type ReactNode, useCallback } from 'react';
 
 import { messageStateSelectors, useConversationStore } from '../store';
-
-/**
- * Roles that carry forwardable text. Tool calls, tasks, verify cards etc. are
- * not meaningful as standalone forwarded context, so they stay un-selectable.
- */
-const SELECTABLE_ROLES = new Set(['user', 'assistant', 'assistantGroup']);
+import { isSelectableRole } from './selectableRoles';
+import SelectCircle from './SelectCircle';
 
 const styles = createStaticStyles(({ css }) => ({
-  checkbox: css`
-    flex: none;
-    padding-block-start: 4px;
-  `,
+  // Content is non-interactive while selecting — the whole row is the toggle.
   content: css`
+    pointer-events: none;
     flex: 1;
     min-width: 0;
-  `,
-  // Content is non-interactive while selecting — the whole row is the toggle.
-  contentBlocked: css`
-    pointer-events: none;
   `,
   disabled: css`
     cursor: not-allowed;
     opacity: 0.4;
   `,
-  selectable: css`
+  // Full-width single-row band, WeChat-style: highlight spans the whole row.
+  row: css`
     cursor: pointer;
-    padding-inline: 8px;
-    border-radius: ${cssVar.borderRadiusLG};
+
+    inline-size: 100%;
+    padding-block: 4px;
+    padding-inline: 12px;
+
     transition: background-color 0.1s ${cssVar.motionEaseInOut};
 
     &:hover {
-      background-color: ${cssVar.colorFillTertiary};
+      background-color: ${cssVar.colorFillQuaternary};
     }
   `,
-  selected: css`
+  rowSelected: css`
     background-color: ${cssVar.colorFillSecondary};
 
     &:hover {
@@ -56,38 +49,38 @@ interface MessageSelectionWrapperProps {
 }
 
 /**
- * In multi-select mode, wraps a message with a leading checkbox and turns the
- * whole row into a single toggle target. Outside selection mode it renders the
- * message untouched.
+ * In multi-select mode, wraps a message with a leading round checkbox and turns
+ * the whole full-width row into a single toggle target (selected rows get a
+ * banner highlight). Outside selection mode it renders the message untouched.
  */
 const MessageSelectionWrapper = memo<MessageSelectionWrapperProps>(({ children, id, role }) => {
   const isSelectionMode = useConversationStore(messageStateSelectors.isSelectionMode);
   const isSelected = useConversationStore(messageStateSelectors.isMessageSelected(id));
   const toggleMessageSelected = useConversationStore((s) => s.toggleMessageSelected);
 
-  const isSelectable = !!role && SELECTABLE_ROLES.has(role);
+  const selectable = isSelectableRole(role);
 
   const handleToggle = useCallback(() => {
-    if (!isSelectable) return;
+    if (!selectable) return;
     toggleMessageSelected(id);
-  }, [isSelectable, toggleMessageSelected, id]);
+  }, [selectable, toggleMessageSelected, id]);
 
   if (!isSelectionMode) return <>{children}</>;
 
-  if (!isSelectable) {
+  if (!selectable) {
     return <div className={styles.disabled}>{children}</div>;
   }
 
   return (
     <Flexbox
       horizontal
-      align={'flex-start'}
-      className={cx(styles.selectable, isSelected && styles.selected)}
-      gap={8}
+      align={'center'}
+      className={cx(styles.row, isSelected && styles.rowSelected)}
+      gap={12}
       onClick={handleToggle}
     >
-      <Checkbox checked={isSelected} className={styles.checkbox} />
-      <div className={cx(styles.content, styles.contentBlocked)}>{children}</div>
+      <SelectCircle checked={isSelected} />
+      <div className={styles.content}>{children}</div>
     </Flexbox>
   );
 });

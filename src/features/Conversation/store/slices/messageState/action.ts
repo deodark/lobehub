@@ -1,18 +1,25 @@
 import { produce } from 'immer';
 import { type StateCreator } from 'zustand';
 
+import { isSelectableRole } from '../../../MessageForward/selectableRoles';
 import { type State } from '../../initialState';
 
 export interface MessageEditingAction {
   /**
    * Enter multi-select mode. When `initialId` is provided that message starts
-   * selected, so "select" from a single message's menu feels immediate.
+   * selected and anchors the "select to here" range action.
    */
   enterSelectionMode: (initialId?: string) => void;
   /**
    * Leave multi-select mode and drop every selected id.
    */
   exitSelectionMode: () => void;
+  /**
+   * Select every selectable message from the top of the conversation down to
+   * the anchor (the message selection started from), inclusive. Mirrors
+   * WeChat's "选择到这里".
+   */
+  selectToHere: () => void;
   /**
    * Toggle message editing state
    */
@@ -45,13 +52,35 @@ export const messageEditingSlice: StateCreator<
 > = (set, get) => ({
   enterSelectionMode: (initialId) => {
     set(
-      { selectedMessageIds: initialId ? [initialId] : [], selectionMode: true },
+      {
+        selectedMessageIds: initialId ? [initialId] : [],
+        selectionAnchorId: initialId,
+        selectionMode: true,
+      },
       false,
       'enterSelectionMode',
     );
   },
   exitSelectionMode: () => {
-    set({ selectedMessageIds: [], selectionMode: false }, false, 'exitSelectionMode');
+    set(
+      { selectedMessageIds: [], selectionAnchorId: undefined, selectionMode: false },
+      false,
+      'exitSelectionMode',
+    );
+  },
+  selectToHere: () => {
+    const { displayMessages, selectionAnchorId } = get();
+    const anchorIndex = selectionAnchorId
+      ? displayMessages.findIndex((m) => m.id === selectionAnchorId)
+      : displayMessages.length - 1;
+    if (anchorIndex < 0) return;
+
+    const ids = displayMessages
+      .slice(0, anchorIndex + 1)
+      .filter((m) => isSelectableRole(m.role))
+      .map((m) => m.id);
+
+    set({ selectedMessageIds: ids }, false, 'selectToHere');
   },
   toggleMessageEditing: (id, editing) => {
     set(

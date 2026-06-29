@@ -10,7 +10,7 @@ import { useShallow } from 'zustand/react/shallow';
 import { messageMapKey } from '@/store/chat/utils/messageMapKey';
 
 import WideScreenContainer from '../../../WideScreenContainer';
-import { MessageForwardSelectionBar } from '../../MessageForward';
+import { MessageForwardSelectToHere } from '../../MessageForward';
 import {
   dataSelectors,
   inputSelectors,
@@ -277,6 +277,8 @@ const VirtualizedList = memo<VirtualizedListProps>(
         onTouchMoveCapture={markUserScrollIntent}
         onWheelCapture={markUserScrollIntent}
       >
+        {/* Pinned to the list viewport top; only renders while multi-selecting */}
+        <MessageForwardSelectToHere />
         {/* Debug Inspector - placed outside VList so it won't be recycled by the virtual list */}
         {OPEN_DEV_INSPECTOR && <DebugInspector />}
         <VList
@@ -361,8 +363,6 @@ const VirtualizedList = memo<VirtualizedListProps>(
             onScrollToBottom={() => scrollToBottom(true)}
           />
         </WideScreenContainer>
-        {/* Pinned to the list viewport bottom; only renders while multi-selecting */}
-        <MessageForwardSelectionBar />
       </div>
     );
   },

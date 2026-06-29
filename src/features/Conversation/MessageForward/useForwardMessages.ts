@@ -5,21 +5,24 @@ import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { useNavigateToAgent } from '@/hooks/useNavigateToAgent';
+import { useChatStore } from '@/store/chat';
 
 import { useConversationStore } from '../store';
 import { buildForwardedContent } from './forwardDispatch';
 import { useForwardDispatchStore } from './forwardDispatchStore';
 
-interface ForwardTarget {
+export interface ForwardTarget {
   id: string;
   title?: string | null;
 }
 
 /**
- * Returns a callback that forwards the currently-selected messages to a target
- * agent: it serialises them into a Markdown transcript, parks it in the
- * forward-dispatch store, then navigates to the target agent where
- * {@link ForwardMessageDispatcher} sends it as the opening turn of a new topic.
+ * Returns a callback that forwards the currently-selected messages to one or
+ * more target agents. The transcript is serialised once, then:
+ * - the first (primary) target is parked + navigated to, so the user lands in
+ *   it and {@link ForwardMessageDispatcher} sends the opening turn;
+ * - any additional targets are sent in the background via the global chat store
+ *   (isolated new topic each), so "分别发送" reaches every recipient.
  */
 export const useForwardMessages = () => {
   const { t } = useTranslation('chat');
@@ -36,11 +39,12 @@ export const useForwardMessages = () => {
   }, isEqual);
 
   return useCallback(
-    (target: ForwardTarget) => {
+    (targets: ForwardTarget[]) => {
       if (selectedMessages.length === 0) {
         message.warning(t('messageForward.empty'));
         return;
       }
+      if (targets.length === 0) return;
 
       const content = buildForwardedContent(selectedMessages, {
         header: t('messageForward.transcript.header', { count: selectedMessages.length }),
@@ -48,17 +52,37 @@ export const useForwardMessages = () => {
           role === 'user' ? t('messageForward.role.user') : t('messageForward.role.assistant'),
       });
 
+      const [primary, ...rest] = targets;
+
+      // Primary: park the transcript so the post-navigation dispatcher sends it.
       setPendingForward({
         content,
         dispatchId: nanoid(),
         messageCount: selectedMessages.length,
-        targetAgentId: target.id,
+        targetAgentId: primary.id,
       });
 
-      exitSelectionMode();
-      navigateToAgent(target.id);
+      // Additional recipients: fire-and-forget background sends into an isolated
+      // new topic each (no navigation, no hijacking the active topic).
+      for (const target of rest) {
+        void useChatStore
+          .getState()
+          .sendMessage({
+            context: { agentId: target.id, isNew: true, isolatedTopic: true, scope: 'main' },
+            message: content,
+            messages: [],
+          })
+          .catch(() => {});
+      }
 
-      message.success(t('messageForward.success', { title: target.title || '' }));
+      exitSelectionMode();
+      navigateToAgent(primary.id);
+
+      message.success(
+        targets.length === 1
+          ? t('messageForward.success', { title: primary.title || '' })
+          : t('messageForward.successMulti', { count: targets.length }),
+      );
     },
     [t, message, navigateToAgent, setPendingForward, exitSelectionMode, selectedMessages],
   );

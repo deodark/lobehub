@@ -41,6 +41,12 @@ export interface MessageStateState {
   selectedMessageIds: string[];
 
   /**
+   * The message multi-select mode was entered from. Anchors the "select to
+   * here" range action (top-of-conversation → anchor).
+   */
+  selectionAnchorId?: string;
+
+  /**
    * Whether the conversation is in multi-select mode (used to forward several
    * messages to another agent). When true, each message renders a checkbox and
    * the per-message action bar is suppressed.
@@ -54,6 +60,7 @@ export const messageStateInitialState: MessageStateState = {
   messageEditingIds: [],
   messageLoadingIds: [],
   pendingArgsUpdates: new Map(),
+  selectionAnchorId: undefined,
   selectedMessageIds: [],
   selectionMode: false,
 };
