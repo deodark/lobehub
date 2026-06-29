@@ -1382,7 +1382,7 @@
   "workspace.billingPage.billing.pending.descWithSeats": "将于 {{date}} 切换为{{plan}}{{interval}}，{{seats}} 个席位。请保持账户余额充足。",
   "workspace.billingPage.billing.pending.disabledActionTooltip": "请先取消待生效变更，才能调整席位或更新订阅。",
   "workspace.billingPage.billing.pending.keepPlanCta": "保留 {{plan}}",
-  "workspace.billingPage.billing.pending.seatsDecreaseDesc": "当前工作空间共有 {{currentSeats}} 个席位，将于 {{date}} 调整为 {{seats}} 个席位。",
+  "workspace.billingPage.billing.pending.seatsDecreaseDesc": "当前工作区共有 {{currentSeats}} 个席位，将于 {{date}} 调整为 {{seats}} 个席位。",
   "workspace.billingPage.billing.pending.seatsDesc": "将于 {{date}} 调整为 {{seats}} 个席位。请保持账户余额充足。",
   "workspace.billingPage.billing.pending.seatsTitle": "席位变更已排期",
   "workspace.billingPage.billing.pending.title": "计划变更已排期",
