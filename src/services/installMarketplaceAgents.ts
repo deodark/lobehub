@@ -28,8 +28,20 @@ export interface InstallMarketplaceAgentsResult {
   summaries: InstallMarketplaceAgentSummary[];
 }
 
+export interface InstallMarketplaceAgentsOptions {
+  /**
+   * Override the visibility used when inserting into a workspace. Defaults to
+   * `'public'` (shared with the workspace) — callers can opt into `'private'`
+   * when the user explicitly wants the agent kept to themselves.
+   *
+   * Ignored in personal mode (the column is meaningless without a workspace).
+   */
+  visibility?: 'private' | 'public';
+}
+
 export const installMarketplaceAgents = async (
   sourceAgentIds: string[],
+  options?: InstallMarketplaceAgentsOptions,
 ): Promise<InstallMarketplaceAgentsResult> => {
   if (sourceAgentIds.length === 0) {
     return { installedAgentIds: [], skippedAgentIds: [], summaries: [] };
@@ -38,11 +50,7 @@ export const installMarketplaceAgents = async (
   const createAgent = useAgentStore.getState().createAgent;
   const refreshAgentList = useHomeStore.getState().refreshAgentList;
 
-  // Forks/installs from the community land in the user's Private bucket when
-  // they're inside a workspace, so newly-grabbed agents don't show up to
-  // every teammate by surprise. Personal mode is untouched — its rows are
-  // already implicitly owner-private.
-  const visibility = getActiveWorkspaceId() ? ('private' as const) : undefined;
+  const visibility = getActiveWorkspaceId() ? (options?.visibility ?? 'public') : undefined;
 
   // 1. Parallel dedupe — find which source ids are already forked
   const existing = await Promise.all(
