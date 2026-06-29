@@ -86,7 +86,7 @@ The aesthetic is calm and content-first: generous whitespace, restrained color, 
 Two things make this system different from a fixed palette, and both matter when you build with it:
 
 1. **It is themeable.** Users choose a **primary** color and a **neutral** color. Never hard-code a hex value from this file — read the **semantic token** (e.g. `cssVar.colorPrimary`, `cssVar.colorText`) so your UI follows the user's theme and adapts between light and dark automatically.
-2. **It has design values.** LobeHub follows four product values — **自然 Natural・意义感 Meaningful・确定性 Certainty・生长性 Growth** — that decide trade-offs the tokens can't. They are summarized under [Design Values](#design-values) and are the tie-breaker when guidance conflicts.
+2. **It has design values.** LobeHub follows four product values — **Natural · Meaningful · Certainty · Growth** — that decide trade-offs the tokens can't. They are summarized under [Design Values](#design-values) and are the tie-breaker when guidance conflicts.
 
 The YAML above lists the default **Light** theme. The Dark theme redefines the same token names; build against names, not values.
 
@@ -94,12 +94,12 @@ The YAML above lists the default **Light** theme. The Dark theme redefines the s
 
 The philosophy behind every LobeHub interface, adapted from Ant Design's design values. Read these before designing a flow.
 
-- **自然 (Natural)** — Minimize cognitive load. The next step should be obvious without thinking; carry the user forward with sensible defaults, AI assistance, and smooth transitions rather than making them stop and figure things out.
-- **意义感 (Meaningful)** — Root every screen in the user's real goal. Make the objective clear, give immediate feedback on each action, and always point at the next meaningful step.
-- **确定性 (Certainty)** — Low-entropy, predictable interactions. Reuse the same patterns, components, and wording. Keep one clear focus per surface and design **every** state — empty, loading, error, success. Restraint over cleverness.
-- **生长性 (Growth)** — The product grows with the user. Surface advanced capability progressively, revealing features at the moment they become relevant without crowding the novice path.
+- **Natural** — Minimize cognitive load. The next step should be obvious without thinking; carry the user forward with sensible defaults, AI assistance, and smooth transitions rather than making them stop and figure things out.
+- **Meaningful** — Root every screen in the user's real goal. Make the objective clear, give immediate feedback on each action, and always point at the next meaningful step.
+- **Certainty** — Low-entropy, predictable interactions. Reuse the same patterns, components, and wording. Keep one clear focus per surface and design **every** state — empty, loading, error, success. Restraint over cleverness.
+- **Growth** — The product grows with the user. Surface advanced capability progressively, revealing features at the moment they become relevant without crowding the novice path.
 
-**Priority when values conflict** (moment-to-moment interaction): **意义感 ≳ 自然 > 确定性** — never sacrifice the user's goal or forward momentum just to keep things uniform. **生长性** is a longer-horizon lens for how a feature is discovered and scales, not a single-screen layout call.
+**Priority when values conflict** (moment-to-moment interaction): **Meaningful ≳ Natural > Certainty** — never sacrifice the user's goal or forward momentum just to keep things uniform. **Growth** is a longer-horizon lens for how a feature is discovered and scales, not a single-screen layout call.
 
 ## Colors
 
@@ -177,14 +177,48 @@ Style components with **antd-style**: prefer `createStaticStyles` with `cssVar.*
 
 ## Voice & Content
 
-Copy is part of the design — precise, calm, and free of filler. Match the UI language (LobeHub ships en-US and zh-CN by hand; keys live in `src/locales/default`).
+Copy is part of the design — precise, calm, and free of filler. The voice is youthful, friendly, and modern on the surface; professional, reliable, and control-first underneath (reference points: Notion, Figma, Apple, Discord, OpenAI). Keys live in `src/locales/default`; LobeHub ships en-US and zh-CN by hand, so write a source string that translates cleanly without expanding much in length.
 
-- Name actions with a verb and a noun (`Create Agent`, `Delete Session`), never a bare `Confirm`, `OK`, or `Submit`.
-- Write errors as what happened plus what to do next — surface the reason and a recovery path, not just "Something went wrong."
-- Confirm outcomes by naming the specific thing that changed; skip "successfully" and marketing superlatives.
-- Empty states point to the first action ("No agents yet. Create one to get started."), not a blank screen.
-- Use present-participle with an ellipsis for in-progress states (`Generating…`, `Saving…`).
-- Keep it human and concise; don't over-explain, don't patronize.
+The brand promise is **For Collaborative Agents** — reinforce that LobeHub is not about one-shot "generation" but a collaborative agent system: shareable context, traceable outcomes, replayable runs, evolvable setup, and human-in-the-loop. Three principles to bake into structure and wording:
+
+- **Create** — idea to usable Agent in one sentence, with a clear next step.
+- **Collaborate** — multiple agents and people aligned on the same shared Context, controlled and manageable.
+- **Evolve** — Agents remember preferences only with consent and get more helpful over time; keep it explainable, editable, and replayable.
+
+### Terminology
+
+One concept maps to **one term** site-wide — never alternate synonyms (no "bot / assistant / AI agent" drift for **Agent**). Canonical terms: **Workspace**, **Agent**, **Agent Profile**, **Group**, **Context**, **Memory**, **Integration**, **Skill**, **Topic**, **Page**, **Community**, **Resource**, **Library**, **MCP**, **Provider**, **Evaluation**, **Benchmark**, **Dataset**, **Test Case**. Prefer plain words ("connect", "run", "context") over jargon; when a technical term is unavoidable, gloss it in plain English.
+
+### Writing rules
+
+- **Clarity first** — short sentences, strong verbs, few adjectives. No hype ("revolutionary", "epic", "100%").
+- **Layered, not split** — one main line that is simple and actionable, plus an optional second line (subtitle, helper text, tooltip) for precision or boundaries. Don't ship "simple vs pro" variants.
+- **Consistent verbs** — reuse the same verb for the same action everywhere: Create / Connect / Run / Pause / Retry / View details / Clear Memory.
+- **Always actionable** — every message tells the user what to do next. Name actions with a verb and a noun (`Create Agent`, `Delete Session`), never a bare `Confirm`, `OK`, or `Submit`.
+- **Confirm outcomes** by naming the specific thing that changed; skip "successfully" and superlatives.
+- **Empty states** point to the first action ("No agents yet. Create one to get started."), not a blank screen.
+- **In-progress** states use a present participle with an ellipsis (`Generating…`, `Saving…`).
+
+### Human warmth
+
+Reduce anxiety and restore control without being sentimental. Default to **80% information, 20% warmth**; at key moments (first run, empty state, long waits, failures, data-loss risk, collaboration conflicts) up to **70/30**. Hard cap: at most half a sentence to one sentence of warmth, always followed by a clear next step. Order every sensitive message as:
+
+1. Acknowledge the situation, without judgment.
+2. Restore control — pause, replay, edit, undo, clear Memory, view Context.
+3. Give the next action (button or path).
+
+Avoid preachy encouragement ("don't worry"), grand narratives, and over-anthropomorphizing ("I understand you", "I'll always remember you"). The stance: Agents accelerate output, but the user owns the judgment and the final decision.
+
+Sample patterns:
+
+- **Getting started** — "Starting with one sentence is enough. Describe your goal and I'll set up the first Agent."
+- **Long run** — "Running… You can switch tasks; I'll notify you when it's done." / "This may take a few minutes. To speed up: reduce Context or switch model."
+- **Failure** — "That didn't run through. Retry, or view details to fix the cause." / "Connection failed. Re-authorize in Settings, or try again later."
+- **Collaboration** — "Align everyone to the same Context — every Agent in the Group works from the same page."
+
+### Errors and exceptions
+
+Every error states **what happened**, optionally **why**, and **what to do next**. Offer concrete recovery — Retry / View details / Go to Settings / Contact support / Copy logs — rather than a dead end. Never blame the user, never show only an error code (put codes under "Details"). For data, security, and billing, stay neutral and thorough; here warmth comes from clarity, not emotion.
 
 ## Do's and Don'ts
 
