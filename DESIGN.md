@@ -1,43 +1,48 @@
 ---
 version: alpha
 name: LobeHub
-description: LobeHub's design system, built on @lobehub/ui (Ant Design + antd-style). Tokens are themeable — primary and neutral colors are user-configurable and resolve to CSS variables (cssVar key `lobe-vars`). Values below are the default Light theme; the Dark theme uses the same token names with different values.
+description: LobeHub's design system, built on @lobehub/ui (Ant Design + antd-style). Tokens are themeable — primary and neutral colors are user-configurable and resolve to CSS variables (cssVar key `lobe-vars`). This is the Light theme; the Dark theme uses the same token names with different values and is documented in DESIGN.dark.md.
 themeable:
   # Users pick a primary and a neutral; components must read the semantic tokens
   # below rather than hard-coding any single value from this list.
   primaryColor:
-    default: blue # antd default seed when unset
+    default: ~ # monochrome (near-black in light) when unset — see colorPrimary
     options:
       [red, orange, gold, yellow, lime, green, cyan, blue, geekblue, purple, magenta, volcano]
   neutralColor:
-    default: ~ # antd default grey when unset
+    default: ~ # the built-in `gray` scale when unset
     options: [mauve, slate, sage, olive, sand]
 colors:
   # Semantic tokens (Ant Design names) — the real contract components consume via
   # `cssVar.colorPrimary`, `cssVar.colorText`, etc. Light-theme defaults shown.
-  colorPrimary: '#1677ff' # derived from the chosen primaryColor; blue when unset
-  colorSuccess: '#52c41a'
-  colorWarning: '#faad14'
-  colorError: '#ff4d4f'
-  colorInfo: '#1677ff'
-  # Text — opacity-based neutrals that hold contrast on any surface
-  colorText: 'rgba(0, 0, 0, 0.88)' # primary text
-  colorTextSecondary: 'rgba(0, 0, 0, 0.65)' # secondary text, labels
-  colorTextTertiary: 'rgba(0, 0, 0, 0.45)' # placeholder, captions
-  colorTextQuaternary: 'rgba(0, 0, 0, 0.25)' # disabled
+  colorPrimary: '#222222' # monochrome by default; becomes the chosen primaryColor[9]
+  colorSuccess: '#379d4a' # green
+  colorWarning: '#ee9e0b' # gold
+  colorError: '#ec5e41' # volcano
+  colorInfo: '#0072f5' # geekblue
+  # Text — solid neutrals from the `gray` scale; rank info with these
+  colorText: '#080808' # primary text and icons
+  colorTextSecondary: '#666666' # secondary text, labels
+  colorTextTertiary: '#999999' # placeholder, captions
+  colorTextQuaternary: '#bbbbbb' # disabled
   # Surfaces — separate scale from text; never substitute one for the other
-  colorBgLayout: '#f5f5f5' # page background
+  colorBgLayout: '#f8f8f8' # page background
   colorBgContainer: '#ffffff' # primary card / panel surface
-  colorBgContainerSecondary: '#fafafa' # subtle secondary surface (lobe-ui custom token)
+  colorBgContainerSecondary: '#fbfbfb' # subtle secondary surface (lobe-ui custom token)
   colorBgElevated: '#ffffff' # popovers, menus, modals
-  colorBgSpotlight: 'rgba(0, 0, 0, 0.85)' # tooltips
+  colorBgSpotlight: '#dddddd' # tooltips
   # Borders & fills — translucent, layer over any background
-  colorBorder: 'rgba(0, 0, 0, 0.15)'
-  colorBorderSecondary: 'rgba(0, 0, 0, 0.06)' # default divider / subtle border
-  colorFill: 'rgba(0, 0, 0, 0.15)'
+  colorBorder: '#e3e3e3' # stronger edge
+  colorBorderSecondary: '#eeeeee' # default divider / subtle border
+  colorFill: 'rgba(0, 0, 0, 0.12)'
   colorFillSecondary: 'rgba(0, 0, 0, 0.06)'
-  colorFillTertiary: 'rgba(0, 0, 0, 0.04)' # hover wash
-  colorFillQuaternary: 'rgba(0, 0, 0, 0.02)' # active wash
+  colorFillTertiary: 'rgba(0, 0, 0, 0.03)' # hover wash
+  colorFillQuaternary: 'rgba(0, 0, 0, 0.015)' # active wash
+elevation:
+  # Shared by both themes; pair each with the matching radius
+  boxShadowTertiary: '0 3px 1px -1px rgba(26, 26, 26, 0.06)' # raised cards
+  boxShadowSecondary: '0 8px 16px -4px rgba(0, 0, 0, 0.2)' # popovers, menus
+  boxShadow: '0 20px 20px -8px rgba(0, 0, 0, 0.24)' # modals, dialogs
 typography:
   fontFamily: 'Geist, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Roboto, "Helvetica Neue", Arial, "HarmonyOS Sans SC", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei UI", "Microsoft YaHei", ui-sans-serif, system-ui, sans-serif'
   fontFamilyCode: '"Geist Mono", ui-monospace, SFMono-Regular, "SF Mono", Menlo, "Cascadia Code", Consolas, "HarmonyOS Sans SC", monospace'
@@ -88,7 +93,7 @@ Two things make this system different from a fixed palette, and both matter when
 1. **It is themeable.** Users choose a **primary** color and a **neutral** color. Never hard-code a hex value from this file — read the **semantic token** (e.g. `cssVar.colorPrimary`, `cssVar.colorText`) so your UI follows the user's theme and adapts between light and dark automatically.
 2. **It has design values.** LobeHub follows four product values — **Natural · Meaningful · Certainty · Growth** — that decide trade-offs the tokens can't. They are summarized under [Design Values](#design-values) and are the tie-breaker when guidance conflicts.
 
-The YAML above lists the default **Light** theme. The Dark theme redefines the same token names; build against names, not values.
+The YAML above lists the default **Light** theme. The Dark theme redefines the same token names with different values and lives in **[DESIGN.dark.md](./DESIGN.dark.md)** — every other section here (typography, layout, motion, shapes, components, voice, values) is theme-independent and applies to both. Build against token names, not values.
 
 ## Design Values
 
@@ -105,7 +110,7 @@ The philosophy behind every LobeHub interface, adapted from Ant Design's design 
 
 LobeHub uses Ant Design's **semantic token** model. A token's name encodes its **role**, so the same name resolves to the right value in light, dark, and under any user theme. Always consume tokens by name — in antd-style, `cssVar.colorText`, `cssVar.colorBgContainer`, and so on.
 
-**Text** uses opacity-based neutrals that hold contrast on any surface — rank information with them rather than reaching for color:
+**Text** uses solid neutrals from the `gray` scale that hold contrast on any surface — rank information with them rather than reaching for color:
 
 - `colorText` — primary text and icons
 - `colorTextSecondary` — secondary text, form labels
@@ -116,7 +121,7 @@ LobeHub uses Ant Design's **semantic token** model. A token's name encodes its *
 
 **Borders and fills** are translucent (`rgba`/alpha), so they layer over any background. Use `colorBorderSecondary` for the everyday divider and `colorBorder` for a stronger edge; use the `colorFill*` ramp for hover/active washes (`colorFillTertiary` hover, `colorFillQuaternary` active).
 
-**Functional color** is reserved for meaning: `colorPrimary` (the chosen brand color) for the single most important action, focus, and links; `colorSuccess`, `colorWarning`, `colorError`, `colorInfo` for state. Each functional and accent color also exposes a derived ramp — `color{Name}`, `color{Name}Hover`, `color{Name}Active`, `color{Name}Bg`, `color{Name}Border`, `color{Name}Text`, and `color{Name}Fill*` — so you can build tinted backgrounds, borders, and text without picking raw values.
+**Functional color** is reserved for meaning: `colorPrimary` for the single most important action, focus, and links — note it is **monochrome by default** (near-black in light, near-white in dark) and only takes on a hue when the user picks a primary color, which keeps the default UI calm; `colorSuccess`, `colorWarning`, `colorError`, `colorInfo` for state. Each functional and accent color also exposes a derived ramp — `color{Name}`, `color{Name}Hover`, `color{Name}Active`, `color{Name}Bg`, `color{Name}Border`, `color{Name}Text`, and `color{Name}Fill*` — so you can build tinted backgrounds, borders, and text without picking raw values.
 
 ## Typography
 
@@ -138,11 +143,11 @@ Layouts must work across appearances and form factors: every surface ships **lig
 
 Hierarchy comes from **tonal surfaces and borders first**, so shadows stay subtle. Lift only what genuinely floats:
 
-- Raised cards / panels: a soft, barely-there shadow — most cards need none, just a `colorBorderSecondary` edge.
+- Raised cards / panels: `boxShadowTertiary`, barely-there — most cards need none, just a `colorBorderSecondary` edge.
 - Popovers and menus: `boxShadowSecondary`.
 - Modals and dialogs: `boxShadow`, the strongest tier.
 
-Tooltips take the lightest treatment on `colorBgSpotlight`. Pair each elevation with the matching radius below, and prefer a border over a shadow when both would read.
+The shadow tokens are **shared across light and dark** — only the surface and border colors change between themes. Tooltips take the lightest treatment on `colorBgSpotlight`. Pair each elevation with the matching radius below, and prefer a border over a shadow when both would read.
 
 ## Motion
 
