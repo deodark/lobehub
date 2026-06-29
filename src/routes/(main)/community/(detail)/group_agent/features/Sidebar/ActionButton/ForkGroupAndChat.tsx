@@ -36,30 +36,33 @@ const styles = createStaticStyles(({ css, cssVar }) => ({
     border-start-start-radius: 0 !important;
     border-end-start-radius: 0 !important;
   `,
-  // Match Button type="primary": same dark bg, white text/chevron, flat
-  // right edge so it abuts the action button cleanly. Inline-end border is
-  // removed to avoid a double-border seam between the two halves.
+  // Match Button type="primary" on the right so the two halves read as one
+  // pill. (colorPrimary bg + colorBgLayout text) auto-flips with the theme:
+  // dark bg + near-white text in light theme, white bg + near-black text
+  // in dark theme. We use colorBgLayout directly instead of the
+  // semantically-named colorTextLightSolid because the cssVar proxy doesn't
+  // pick up LobeHub's JS-level override of that token.
   visibilitySelect: css`
-    width: 96px;
+    width: 112px;
     border-color: ${cssVar.colorPrimary} !important;
     border-inline-end-width: 0 !important;
     border-start-end-radius: 0 !important;
     border-end-end-radius: 0 !important;
 
-    color: ${cssVar.colorTextLightSolid} !important;
+    color: ${cssVar.colorBgLayout} !important;
 
     background: ${cssVar.colorPrimary} !important;
 
     & svg {
-      color: ${cssVar.colorTextLightSolid};
+      color: ${cssVar.colorBgLayout};
     }
 
-    &:hover:not(:disabled) {
+    &:hover:not([data-disabled]) {
       border-color: ${cssVar.colorPrimaryHover} !important;
       background: ${cssVar.colorPrimaryHover} !important;
     }
 
-    &:active:not(:disabled) {
+    &:active:not([data-disabled]) {
       border-color: ${cssVar.colorPrimaryActive} !important;
       background: ${cssVar.colorPrimaryActive} !important;
     }

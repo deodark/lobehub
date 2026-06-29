@@ -1332,6 +1332,7 @@ When I am ___, I need ___
   'workspace.billingPage.billing.change.title': 'Adjust plan',
   'workspace.billingPage.billing.changeFailed': 'Failed to update subscription.',
   'workspace.billingPage.billing.changeSuccess': 'Subscription update saved.',
+  'workspace.billingPage.billing.upgradePlanModal.calculating': 'Calculating…',
   'workspace.billingPage.billing.upgradePlanModal.cancelCta': 'Cancel',
   'workspace.billingPage.billing.upgradePlanModal.checkoutCharge':
     'You will be redirected to checkout to complete payment.',
@@ -1370,10 +1371,10 @@ When I am ___, I need ___
     "We couldn't complete this update. {{reason}}",
   'workspace.billingPage.billing.upgradePlanModal.resultFailedRetryCta': 'Try again',
   'workspace.billingPage.billing.upgradePlanModal.resultFailedTitle': 'Update failed',
-  'workspace.billingPage.billing.upgradePlanModal.resultPlanChangedDesc': 'Plan upgrade applied.',
-  'workspace.billingPage.billing.upgradePlanModal.resultPlanChangedTitle': 'Plan upgraded',
-  'workspace.billingPage.billing.upgradePlanModal.resultPlanLabel': 'Plan',
-  'workspace.billingPage.billing.upgradePlanModal.resultPlanValue': '{{plan}} · {{interval}}',
+  'workspace.billingPage.billing.upgradePlanModal.resultPlanChangedTitle':
+    'Upgraded to {{plan}} · {{interval}}',
+  'workspace.billingPage.billing.upgradePlanModal.resultPlanSeatsNewPurchase':
+    'Purchased {{count}} new seats',
   'workspace.billingPage.billing.upgradePlanModal.resultSeatsExpanded':
     'Purchased: {{changedSeats}} seats · Total: {{seats}} seats',
   'workspace.billingPage.billing.upgradePlanModal.resultSeatsLabel': 'Seats',

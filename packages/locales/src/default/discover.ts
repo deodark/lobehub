@@ -176,7 +176,7 @@ export default {
   'fork.viewAllForks': 'View all forks',
 
   'fork.visibilityPrivate': 'Private',
-  'fork.visibilityPublic': 'Public',
+  'fork.visibilityPublic': 'Workspace',
 
   'groupAgents.tag': 'Group',
 
