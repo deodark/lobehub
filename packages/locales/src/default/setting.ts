@@ -1299,10 +1299,18 @@ When I am ___, I need ___
     'Are you sure you want to downgrade your plan?',
   'workspace.billingPage.billing.cancelSuccess': 'Cancellation scheduled.',
   'workspace.billingPage.billing.cancelTitle': 'Cancel subscription?',
+  'workspace.billingPage.billing.billingPeriodModal.adjustmentLine': 'Prorated adjustment',
   'workspace.billingPage.billing.billingPeriodModal.body':
     "Your workspace's billing period will be changed from {{current}} to {{target}}.",
   'workspace.billingPage.billing.billingPeriodModal.cancelCta': 'Cancel',
+  'workspace.billingPage.billing.billingPeriodModal.chargesSubtitle':
+    'Billed {{interval}}, starting today',
   'workspace.billingPage.billing.billingPeriodModal.confirmCta': 'Change billing period',
+  'workspace.billingPage.billing.billingPeriodModal.creditsSubtitle':
+    'Prorated credit for unused time on the current period',
+  'workspace.billingPage.billing.billingPeriodModal.previewFailed':
+    "Couldn't load the price preview. Please try again.",
+  'workspace.billingPage.billing.billingPeriodModal.previewRetryCta': 'Retry',
   'workspace.billingPage.billing.billingPeriodModal.scheduledChange':
     'The change will take effect after the current period ends.',
   'workspace.billingPage.billing.billingPeriodModal.scheduledChangeWithDate':
@@ -1706,6 +1714,9 @@ When I am ___, I need ___
   'workspace.billingPage.usage.model.showLess': 'Show less',
   'workspace.billingPage.usage.model.unknown': 'Unknown model',
   'workspace.billingPage.usage.ops': 'Operations',
+  'workspace.billingPage.usage.privateAgents': 'Private agents',
+  'workspace.billingPage.usage.privateAgentsTooltip':
+    'Number of private agents owned by this member. Owners can see the count for accounting, but not the agent content.',
   'workspace.billingPage.usage.range.30d': 'Last 30 days',
   'workspace.billingPage.usage.range.all': 'All time',
   'workspace.billingPage.usage.range.cycle': 'This cycle',
