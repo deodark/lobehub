@@ -1438,7 +1438,7 @@
   "workspace.billingPage.billing.upgradePlanModal.resultPaymentChargedAmount": "{{amount}} tahsil edildi · Faturalandırma tutarı",
   "workspace.billingPage.billing.upgradePlanModal.resultPaymentLabel": "Ödeme sonucu",
   "workspace.billingPage.billing.upgradePlanModal.resultPaymentScheduled": "Herhangi bir ödeme alınmadı. Değişiklik bir sonraki fatura dönemi için planlandı.",
-  "workspace.billingPage.billing.upgradePlanModal.resultPlanChangedTitle": "{{plan}} · {{interval}} planına yükseltildi",
+  "workspace.billingPage.billing.upgradePlanModal.resultPlanChangedTitle": "Plan yükseltildi",
   "workspace.billingPage.billing.upgradePlanModal.resultPlanSeatsNewPurchase": "{{count}} yeni koltuk satın alındı",
   "workspace.billingPage.billing.upgradePlanModal.resultSeatsExpanded": "{{seats}} toplam koltuk artık mevcut, buna {{purchasedSeats}} ön ödemeli ek koltuk dahildir.",
   "workspace.billingPage.billing.upgradePlanModal.resultSeatsLabel": "Koltuk satın alma sonucu",

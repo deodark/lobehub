@@ -1438,7 +1438,7 @@
   "workspace.billingPage.billing.upgradePlanModal.resultPaymentChargedAmount": "{{amount}} دریافت شد · مبلغ در صورتحساب",
   "workspace.billingPage.billing.upgradePlanModal.resultPaymentLabel": "نتیجه پرداخت",
   "workspace.billingPage.billing.upgradePlanModal.resultPaymentScheduled": "هیچ پرداختی انجام نشد. این تغییر برای چرخه صورتحساب بعدی برنامه‌ریزی شده است.",
-  "workspace.billingPage.billing.upgradePlanModal.resultPlanChangedTitle": "ارتقا به {{plan}} · {{interval}}",
+  "workspace.billingPage.billing.upgradePlanModal.resultPlanChangedTitle": "طرح ارتقا یافت",
   "workspace.billingPage.billing.upgradePlanModal.resultPlanSeatsNewPurchase": "{{count}} صندلی جدید خریداری شد",
   "workspace.billingPage.billing.upgradePlanModal.resultSeatsExpanded": "{{seats}} صندلی در مجموع اکنون در دسترس است، شامل {{purchasedSeats}} صندلی اضافی پیش‌پرداخت شده.",
   "workspace.billingPage.billing.upgradePlanModal.resultSeatsLabel": "نتیجه خرید صندلی",

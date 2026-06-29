@@ -1438,7 +1438,7 @@
   "workspace.billingPage.billing.upgradePlanModal.resultPaymentChargedAmount": "{{amount}} đã được tính · Số tiền trong hóa đơn",
   "workspace.billingPage.billing.upgradePlanModal.resultPaymentLabel": "Kết quả thanh toán",
   "workspace.billingPage.billing.upgradePlanModal.resultPaymentScheduled": "Không có khoản thanh toán nào được trừ. Thay đổi được lên lịch cho chu kỳ thanh toán tiếp theo.",
-  "workspace.billingPage.billing.upgradePlanModal.resultPlanChangedTitle": "Đã nâng cấp lên {{plan}} · {{interval}}",
+  "workspace.billingPage.billing.upgradePlanModal.resultPlanChangedTitle": "Đã nâng cấp gói",
   "workspace.billingPage.billing.upgradePlanModal.resultPlanSeatsNewPurchase": "Đã mua {{count}} chỗ ngồi mới",
   "workspace.billingPage.billing.upgradePlanModal.resultSeatsExpanded": "{{seats}} tổng số chỗ ngồi hiện có, bao gồm {{purchasedSeats}} chỗ ngồi bổ sung đã trả trước.",
   "workspace.billingPage.billing.upgradePlanModal.resultSeatsLabel": "Kết quả mua chỗ ngồi",

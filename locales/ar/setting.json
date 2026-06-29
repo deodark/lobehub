@@ -1438,7 +1438,7 @@
   "workspace.billingPage.billing.upgradePlanModal.resultPaymentChargedAmount": "{{amount}} تم خصمه · المبلغ في الفاتورة",
   "workspace.billingPage.billing.upgradePlanModal.resultPaymentLabel": "نتيجة الدفع",
   "workspace.billingPage.billing.upgradePlanModal.resultPaymentScheduled": "لم يتم خصم أي دفعة. التغيير مجدول لدورة الفوترة التالية.",
-  "workspace.billingPage.billing.upgradePlanModal.resultPlanChangedTitle": "تم الترقية إلى {{plan}} · {{interval}}",
+  "workspace.billingPage.billing.upgradePlanModal.resultPlanChangedTitle": "تمت ترقية الخطة",
   "workspace.billingPage.billing.upgradePlanModal.resultPlanSeatsNewPurchase": "تم شراء {{count}} مقعد جديد",
   "workspace.billingPage.billing.upgradePlanModal.resultSeatsExpanded": "{{seats}} مقعدًا إجماليًا متاح الآن، بما في ذلك {{purchasedSeats}} مقاعد إضافية مدفوعة مسبقًا.",
   "workspace.billingPage.billing.upgradePlanModal.resultSeatsLabel": "نتيجة شراء المقاعد",

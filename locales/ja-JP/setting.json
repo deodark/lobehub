@@ -1438,7 +1438,7 @@
   "workspace.billingPage.billing.upgradePlanModal.resultPaymentChargedAmount": "{{amount}} が請求されました · 請求額",
   "workspace.billingPage.billing.upgradePlanModal.resultPaymentLabel": "支払い結果",
   "workspace.billingPage.billing.upgradePlanModal.resultPaymentScheduled": "支払いは請求されませんでした。変更は次の請求サイクルで予定されています。",
-  "workspace.billingPage.billing.upgradePlanModal.resultPlanChangedTitle": "{{plan}} にアップグレードしました · {{interval}}",
+  "workspace.billingPage.billing.upgradePlanModal.resultPlanChangedTitle": "プランをアップグレードしました",
   "workspace.billingPage.billing.upgradePlanModal.resultPlanSeatsNewPurchase": "{{count}} 席を新たに購入しました",
   "workspace.billingPage.billing.upgradePlanModal.resultSeatsExpanded": "{{seats}}席が現在利用可能です（{{purchasedSeats}}席の事前購入済み追加席を含む）。",
   "workspace.billingPage.billing.upgradePlanModal.resultSeatsLabel": "座席購入結果",

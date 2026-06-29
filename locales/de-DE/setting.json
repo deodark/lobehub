@@ -1438,7 +1438,7 @@
   "workspace.billingPage.billing.upgradePlanModal.resultPaymentChargedAmount": "{{amount}} berechnet · Betrag in der Abrechnung",
   "workspace.billingPage.billing.upgradePlanModal.resultPaymentLabel": "Zahlungsergebnis",
   "workspace.billingPage.billing.upgradePlanModal.resultPaymentScheduled": "Es wurde keine Zahlung belastet. Die Änderung ist für den nächsten Abrechnungszyklus geplant.",
-  "workspace.billingPage.billing.upgradePlanModal.resultPlanChangedTitle": "Upgrade auf {{plan}} · {{interval}}",
+  "workspace.billingPage.billing.upgradePlanModal.resultPlanChangedTitle": "Tarif aktualisiert",
   "workspace.billingPage.billing.upgradePlanModal.resultPlanSeatsNewPurchase": "{{count}} neue Sitze gekauft",
   "workspace.billingPage.billing.upgradePlanModal.resultSeatsExpanded": "{{seats}} Gesamtplätze sind jetzt verfügbar, einschließlich {{purchasedSeats}} vorausbezahlter zusätzlicher Plätze.",
   "workspace.billingPage.billing.upgradePlanModal.resultSeatsLabel": "Ergebnis des Platzkaufs",

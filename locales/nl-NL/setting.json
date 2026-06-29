@@ -1438,7 +1438,7 @@
   "workspace.billingPage.billing.upgradePlanModal.resultPaymentChargedAmount": "{{amount}} in rekening gebracht · Bedrag in facturering",
   "workspace.billingPage.billing.upgradePlanModal.resultPaymentLabel": "Betalingsresultaat",
   "workspace.billingPage.billing.upgradePlanModal.resultPaymentScheduled": "Er is geen betaling in rekening gebracht. De wijziging is gepland voor de volgende factureringscyclus.",
-  "workspace.billingPage.billing.upgradePlanModal.resultPlanChangedTitle": "Geüpgraded naar {{plan}} · {{interval}}",
+  "workspace.billingPage.billing.upgradePlanModal.resultPlanChangedTitle": "Abonnement geüpgraded",
   "workspace.billingPage.billing.upgradePlanModal.resultPlanSeatsNewPurchase": "{{count}} nieuwe stoelen gekocht",
   "workspace.billingPage.billing.upgradePlanModal.resultSeatsExpanded": "{{seats}} totale plaatsen zijn nu beschikbaar, inclusief {{purchasedSeats}} vooraf betaalde extra plaatsen.",
   "workspace.billingPage.billing.upgradePlanModal.resultSeatsLabel": "Resultaat plaatsaankoop",

@@ -1438,7 +1438,7 @@
   "workspace.billingPage.billing.upgradePlanModal.resultPaymentChargedAmount": "{{amount}} списано · Сумма в выставлении счета",
   "workspace.billingPage.billing.upgradePlanModal.resultPaymentLabel": "Результат оплаты",
   "workspace.billingPage.billing.upgradePlanModal.resultPaymentScheduled": "Оплата не была списана. Изменение запланировано на следующий платежный цикл.",
-  "workspace.billingPage.billing.upgradePlanModal.resultPlanChangedTitle": "Обновлено до {{plan}} · {{interval}}",
+  "workspace.billingPage.billing.upgradePlanModal.resultPlanChangedTitle": "Тариф обновлён",
   "workspace.billingPage.billing.upgradePlanModal.resultPlanSeatsNewPurchase": "Приобретено {{count}} новых мест",
   "workspace.billingPage.billing.upgradePlanModal.resultSeatsExpanded": "{{seats}} мест теперь доступны, включая {{purchasedSeats}} предоплаченных дополнительных мест.",
   "workspace.billingPage.billing.upgradePlanModal.resultSeatsLabel": "Результат покупки мест",

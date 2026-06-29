@@ -1438,7 +1438,7 @@
   "workspace.billingPage.billing.upgradePlanModal.resultPaymentChargedAmount": "{{amount}} addebitati · Importo in fatturazione",
   "workspace.billingPage.billing.upgradePlanModal.resultPaymentLabel": "Risultato del pagamento",
   "workspace.billingPage.billing.upgradePlanModal.resultPaymentScheduled": "Nessun pagamento è stato addebitato. La modifica è programmata per il prossimo ciclo di fatturazione.",
-  "workspace.billingPage.billing.upgradePlanModal.resultPlanChangedTitle": "Aggiornato a {{plan}} · {{interval}}",
+  "workspace.billingPage.billing.upgradePlanModal.resultPlanChangedTitle": "Piano aggiornato",
   "workspace.billingPage.billing.upgradePlanModal.resultPlanSeatsNewPurchase": "Acquistati {{count}} nuovi posti",
   "workspace.billingPage.billing.upgradePlanModal.resultSeatsExpanded": "Ora sono disponibili {{seats}} posti totali, inclusi {{purchasedSeats}} posti extra prepagati.",
   "workspace.billingPage.billing.upgradePlanModal.resultSeatsLabel": "Risultato dell'acquisto dei posti",

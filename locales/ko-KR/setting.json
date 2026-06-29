@@ -1438,7 +1438,7 @@
   "workspace.billingPage.billing.upgradePlanModal.resultPaymentChargedAmount": "{{amount}} 청구됨 · 청구 금액",
   "workspace.billingPage.billing.upgradePlanModal.resultPaymentLabel": "결제 결과",
   "workspace.billingPage.billing.upgradePlanModal.resultPaymentScheduled": "결제가 청구되지 않았습니다. 변경 사항은 다음 청구 주기에 예정되어 있습니다.",
-  "workspace.billingPage.billing.upgradePlanModal.resultPlanChangedTitle": "{{plan}} · {{interval}}로 업그레이드됨",
+  "workspace.billingPage.billing.upgradePlanModal.resultPlanChangedTitle": "플랜이 업그레이드되었습니다",
   "workspace.billingPage.billing.upgradePlanModal.resultPlanSeatsNewPurchase": "{{count}}개의 새 좌석 구매",
   "workspace.billingPage.billing.upgradePlanModal.resultSeatsExpanded": "{{seats}}개의 총 좌석이 이제 사용 가능하며, {{purchasedSeats}}개의 선결제 추가 좌석이 포함됩니다.",
   "workspace.billingPage.billing.upgradePlanModal.resultSeatsLabel": "좌석 구매 결과",

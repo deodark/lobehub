@@ -1438,7 +1438,7 @@
   "workspace.billingPage.billing.upgradePlanModal.resultPaymentChargedAmount": "{{amount}} начислено · Сума в фактурирането",
   "workspace.billingPage.billing.upgradePlanModal.resultPaymentLabel": "Резултат от плащането",
   "workspace.billingPage.billing.upgradePlanModal.resultPaymentScheduled": "Не е начислено плащане. Промяната е планирана за следващия цикъл на фактуриране.",
-  "workspace.billingPage.billing.upgradePlanModal.resultPlanChangedTitle": "Надградено до {{plan}} · {{interval}}",
+  "workspace.billingPage.billing.upgradePlanModal.resultPlanChangedTitle": "Планът е надграден",
   "workspace.billingPage.billing.upgradePlanModal.resultPlanSeatsNewPurchase": "Закупени {{count}} нови места",
   "workspace.billingPage.billing.upgradePlanModal.resultSeatsExpanded": "{{seats}} общо места са налични сега, включително {{purchasedSeats}} предплатени допълнителни места.",
   "workspace.billingPage.billing.upgradePlanModal.resultSeatsLabel": "Резултат от покупката на места",
