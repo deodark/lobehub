@@ -1303,8 +1303,6 @@ When I am ___, I need ___
   'workspace.billingPage.billing.billingPeriodModal.body':
     "Your workspace's billing period will be changed from {{current}} to {{target}}.",
   'workspace.billingPage.billing.billingPeriodModal.cancelCta': 'Cancel',
-  'workspace.billingPage.billing.billingPeriodModal.chargesSubtitle':
-    'Billed {{interval}}, starting today',
   'workspace.billingPage.billing.billingPeriodModal.confirmCta': 'Change billing period',
   'workspace.billingPage.billing.billingPeriodModal.creditsSubtitle':
     'Prorated credit for unused time on the current period',
@@ -1313,6 +1311,8 @@ When I am ___, I need ___
   'workspace.billingPage.billing.billingPeriodModal.previewRetryCta': 'Retry',
   'workspace.billingPage.billing.billingPeriodModal.scheduledChange':
     'The change will take effect after the current period ends.',
+  'workspace.billingPage.billing.billingPeriodModal.seatsLine': 'Workspace seats',
+  'workspace.billingPage.billing.billingPeriodModal.unitYearly': 'year',
   'workspace.billingPage.billing.billingPeriodModal.scheduledChangeWithDate':
     'The change will take effect after the current period ends on {{date}}.',
   'workspace.billingPage.billing.billingPeriodModal.title': 'Change the billing period?',
@@ -1379,10 +1379,9 @@ When I am ___, I need ___
     "We couldn't complete this update. {{reason}}",
   'workspace.billingPage.billing.upgradePlanModal.resultFailedRetryCta': 'Try again',
   'workspace.billingPage.billing.upgradePlanModal.resultFailedTitle': 'Update failed',
-  'workspace.billingPage.billing.upgradePlanModal.resultPlanChangedTitle':
-    'Upgraded to {{plan}} · {{interval}}',
-  'workspace.billingPage.billing.upgradePlanModal.resultPlanSeatsNewPurchase':
-    'Purchased {{count}} new seats',
+  'workspace.billingPage.billing.upgradePlanModal.resultPlanChangedDesc':
+    'Upgraded to {{plan}} · {{interval}}.',
+  'workspace.billingPage.billing.upgradePlanModal.resultPlanChangedTitle': 'Plan upgraded',
   'workspace.billingPage.billing.upgradePlanModal.resultSeatsExpanded':
     'Purchased: {{changedSeats}} seats · Total: {{seats}} seats',
   'workspace.billingPage.billing.upgradePlanModal.resultSeatsLabel': 'Seats',
@@ -1448,6 +1447,7 @@ When I am ___, I need ___
   'workspace.billingPage.billing.pending.cancelCta': 'Cancel',
   'workspace.billingPage.billing.pending.cancelSuccess': 'Subscription change canceled.',
   'workspace.billingPage.billing.pending.keepPlanCta': 'Keep {{plan}}',
+  'workspace.billingPage.billing.pending.keepPlanCtaWithInterval': 'Keep {{plan}} {{interval}}',
   'workspace.billingPage.billing.pending.desc':
     'Switches to {{plan}} {{interval}} on {{date}}. Keep your account balance sufficient.',
   'workspace.billingPage.billing.pending.descWithSeats':
