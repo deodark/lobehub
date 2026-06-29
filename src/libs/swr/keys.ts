@@ -556,11 +556,16 @@ export const chatToolKeys = {
 
 // ---- stats (settings/stats + user header counts) ------------------------
 export const statsKeys = {
-  agentUsageStat: def('stats:agentUsageStat', (agentId: string, mo?: string) => [
+  agentUsageStat: def(
     'stats:agentUsageStat',
-    agentId,
-    mo,
-  ]),
+    (agentId: string, startAt: string, endAt: string, granularity: string) => [
+      'stats:agentUsageStat',
+      agentId,
+      startAt,
+      endAt,
+      granularity,
+    ],
+  ),
   countMessages: def('stats:countMessages', () => ['stats:countMessages']),
   countSessions: def('stats:countSessions', () => ['stats:countSessions']),
   countTopics: def('stats:countTopics', () => ['stats:countTopics']),
