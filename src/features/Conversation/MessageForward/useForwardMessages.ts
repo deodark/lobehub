@@ -39,18 +39,21 @@ export const useForwardMessages = () => {
   }, isEqual);
 
   return useCallback(
-    (targets: ForwardTarget[]) => {
+    (targets: ForwardTarget[], note?: string) => {
       if (selectedMessages.length === 0) {
         message.warning(t('messageForward.empty'));
         return;
       }
       if (targets.length === 0) return;
 
-      const content = buildForwardedContent(selectedMessages, {
+      const transcript = buildForwardedContent(selectedMessages, {
         header: t('messageForward.transcript.header', { count: selectedMessages.length }),
         roleLabel: (role) =>
           role === 'user' ? t('messageForward.role.user') : t('messageForward.role.assistant'),
       });
+      // Append the user's optional note as the actual instruction after the
+      // forwarded context.
+      const content = note?.trim() ? `${transcript}\n\n${note.trim()}` : transcript;
 
       const [primary, ...rest] = targets;
 

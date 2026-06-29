@@ -30,6 +30,14 @@ const styles = createStaticStyles(({ css }) => ({
       display: none;
     }
   `,
+  // Assistant turns (esp. tool-call workflows) are long; fold them to a preview
+  // height while selecting so the list stays scannable. Fades out at the bottom.
+  contentCollapsed: css`
+    overflow: hidden;
+    max-height: 84px;
+
+    mask-image: linear-gradient(to bottom, #000 56%, transparent 100%);
+  `,
   disabled: css`
     cursor: not-allowed;
     opacity: 0.4;
@@ -73,6 +81,7 @@ const MessageSelectionWrapper = memo<MessageSelectionWrapperProps>(({ children, 
   const toggleMessageSelected = useConversationStore((s) => s.toggleMessageSelected);
 
   const selectable = isSelectableRole(role);
+  const isAssistant = role === 'assistant' || role === 'assistantGroup';
 
   const handleToggle = useCallback(() => {
     if (!selectable) return;
@@ -96,7 +105,7 @@ const MessageSelectionWrapper = memo<MessageSelectionWrapperProps>(({ children, 
       <div className={styles.checkbox}>
         <SelectCircle checked={isSelected} />
       </div>
-      <div className={styles.content}>{children}</div>
+      <div className={cx(styles.content, isAssistant && styles.contentCollapsed)}>{children}</div>
     </Flexbox>
   );
 });

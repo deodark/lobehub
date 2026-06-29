@@ -16,10 +16,7 @@ const styles = createStaticStyles(({ css }) => ({
     position: absolute;
     z-index: 50;
     inset-block-start: 12px;
-    inset-inline: 0;
-
-    display: flex;
-    justify-content: center;
+    inset-inline-start: 16px;
 
     > * {
       pointer-events: auto;
