@@ -2300,6 +2300,8 @@ When I am ___, I need ___
   'workspace.onboarding.skipConfirm.cancel': 'Continue setup',
   'workspace.onboarding.toast.saved': 'Saved',
   'workspace.onboarding.toast.failed': 'Could not save. Please try again.',
+  'workspace.onboarding.toast.installAgentsFailed':
+    "Couldn't add the selected agents. You can install them later from the marketplace.",
   'workspace.onboarding.step1.heading': 'Personalize LobeAI',
   'workspace.onboarding.step1.subtitle':
     'Give your workspace assistant an identity your team will recognize.',
@@ -2372,6 +2374,8 @@ When I am ___, I need ___
     'Your workspace is set up. Jump in and start collaborating with your team.',
   'workspace.onboarding.step4.subtitleWithAgents':
     '{{count}} agent(s) ready to help. Jump in and start collaborating with your team.',
+  'workspace.onboarding.step4.marketProfileNudge':
+    "We've set up a Community profile for <strong>{{name}}</strong> so workspace agents can be installed. <cta>Customize it in Community</cta>.",
   'workspace.onboarding.step4.cta': 'Enter workspace',
   'workspaceSetting.breadcrumb.settings': 'Settings',
   'workspaceSetting.devices.desc':

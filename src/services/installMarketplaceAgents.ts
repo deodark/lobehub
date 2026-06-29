@@ -2,6 +2,7 @@ import type { InstallMarketplaceAgentSummary } from '@lobechat/builtin-tool-web-
 import { customAlphabet } from 'nanoid/non-secure';
 
 import { getActiveWorkspaceId } from '@/business/client/hooks/useActiveWorkspaceId';
+import { lambdaClient } from '@/libs/trpc/client';
 import { agentService } from '@/services/agent';
 import { discoverService } from '@/services/discover';
 import { marketApiService } from '@/services/marketApi';
@@ -23,6 +24,13 @@ const getSourcePath = () => {
 };
 
 export interface InstallMarketplaceAgentsResult {
+  /**
+   * True only when this call freshly auto-provisioned the workspace's Market
+   * Community profile (owner-only path). Lets the caller surface a "we set up
+   * a community handle for you — customize it later" nudge once, instead of
+   * silently mutating the workspace's public identity.
+   */
+  createdMarketProfile?: boolean;
   installedAgentIds: string[];
   skippedAgentIds: string[];
   summaries: InstallMarketplaceAgentSummary[];
@@ -50,7 +58,29 @@ export const installMarketplaceAgents = async (
   const createAgent = useAgentStore.getState().createAgent;
   const refreshAgentList = useHomeStore.getState().refreshAgentList;
 
-  const visibility = getActiveWorkspaceId() ? (options?.visibility ?? 'public') : undefined;
+  const workspaceId = getActiveWorkspaceId();
+  const visibility = workspaceId ? (options?.visibility ?? 'public') : undefined;
+
+  // Workspace-mode forks must be attributed to the workspace's Market org via
+  // `actAs` — the per-user trust token already carries workspaceId, so Market
+  // rejects forks without `x-lobe-owner-account-id` (403). Mirrors the lookup
+  // ForkAndChat does for the single-fork community flow.
+  //
+  // `autoProvision` lets owners install agents on a brand-new workspace before
+  // they've explicitly set a Community handle — server derives one from the
+  // workspace name. Non-owners fall through to the strict path and get
+  // PRECONDITION_FAILED, which the caller (e.g. onboarding) surfaces as a
+  // soft toast.
+  let actAs: number | undefined;
+  let createdMarketProfile = false;
+  if (workspaceId) {
+    const { marketAccountId, created } =
+      await lambdaClient.workspace.ensureMarketOrganization.mutate({
+        autoProvision: true,
+      });
+    actAs = marketAccountId;
+    createdMarketProfile = created;
+  }
 
   // 1. Parallel dedupe — find which source ids are already forked
   const existing = await Promise.all(
@@ -101,6 +131,7 @@ export const installMarketplaceAgents = async (
       ? []
       : await marketApiService.forkAgent(
           prepared.map((p) => ({
+            actAs,
             identifier: p.newIdentifier,
             name: p.detail.title,
             sourceIdentifier: p.sourceId,
@@ -180,5 +211,5 @@ export const installMarketplaceAgents = async (
     await refreshAgentList();
   }
 
-  return { installedAgentIds, skippedAgentIds, summaries };
+  return { createdMarketProfile, installedAgentIds, skippedAgentIds, summaries };
 };
