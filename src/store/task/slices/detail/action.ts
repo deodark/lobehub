@@ -6,6 +6,7 @@ import { message } from '@/components/AntdStaticMethods';
 import { mutate, useClientDataSWR } from '@/libs/swr';
 import { taskKeys } from '@/libs/swr/keys';
 import { taskService } from '@/services/task';
+import { workService } from '@/services/work';
 import type { StoreSetter } from '@/store/types';
 
 import type { TaskStore } from '../../store';
@@ -176,6 +177,11 @@ export class TaskDetailSliceActionImpl {
       }
 
       await this.#get().refreshTaskList();
+      try {
+        await workService.refreshAll();
+      } catch (error) {
+        console.error('[task:deleteTask:refreshWork]', error);
+      }
       return result.data ?? null;
     } catch (error) {
       if (snapshot) {

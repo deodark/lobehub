@@ -15,6 +15,7 @@ import { merge } from '@/utils/merge';
 import { documents } from '../schemas/file';
 import type { NewTaskComment, TaskCommentItem } from '../schemas/task';
 import { taskComments, taskDependencies, taskDocuments, tasks } from '../schemas/task';
+import { works } from '../schemas/work';
 import type { LobeChatDatabase } from '../type';
 import { buildWorkspaceWhere } from '../utils/workspace';
 
@@ -45,6 +46,9 @@ export class TaskModel {
    */
   private childOwnership = (cols: { userId: AnyPgColumn; workspaceId: AnyPgColumn }) =>
     buildWorkspaceWhere({ userId: this.userId, workspaceId: this.workspaceId }, cols);
+
+  private workOwnership = () =>
+    buildWorkspaceWhere({ userId: this.userId, workspaceId: this.workspaceId }, works);
 
   /**
    * Raw-SQL ownership clause for use inside `db.execute(sql...)` CTEs that
@@ -164,19 +168,55 @@ export class TaskModel {
   }
 
   async delete(id: string): Promise<boolean> {
-    const result = await this.db
-      .delete(tasks)
-      .where(and(eq(tasks.id, id), this.ownership()))
-      .returning();
+    const result = await this.db.transaction(async (tx) => {
+      const deleted = await (tx as LobeChatDatabase)
+        .delete(tasks)
+        .where(and(eq(tasks.id, id), this.ownership()))
+        .returning({ id: tasks.id });
+
+      const taskIds = deleted.map((task) => task.id);
+      if (taskIds.length > 0) {
+        // Task delete removes its Work artifact too, e.g. task T-1 -> works.resourceId=task.id.
+        await this.deleteTaskWorks(tx as LobeChatDatabase, taskIds);
+      }
+
+      return deleted;
+    });
 
     return result.length > 0;
   }
 
   async deleteAll(): Promise<number> {
-    const result = await this.db.delete(tasks).where(this.ownership()).returning();
+    const result = await this.db.transaction(async (tx) => {
+      const deleted = await (tx as LobeChatDatabase)
+        .delete(tasks)
+        .where(this.ownership())
+        .returning({ id: tasks.id });
+
+      const taskIds = deleted.map((task) => task.id);
+      if (taskIds.length > 0) {
+        await this.deleteTaskWorks(tx as LobeChatDatabase, taskIds);
+      }
+
+      return deleted;
+    });
 
     return result.length;
   }
+
+  private deleteTaskWorks = async (db: LobeChatDatabase, taskIds: string[]) => {
+    if (taskIds.length === 0) return;
+
+    await db
+      .delete(works)
+      .where(
+        and(
+          eq(works.resourceType, 'task'),
+          inArray(works.resourceId, taskIds),
+          this.workOwnership(),
+        ),
+      );
+  };
 
   // ========== Query ==========
 
