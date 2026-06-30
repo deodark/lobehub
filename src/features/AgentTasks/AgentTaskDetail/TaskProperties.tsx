@@ -1,14 +1,18 @@
 import type { TaskPriority, TaskStatus } from '@lobechat/types';
-import { Block, Text } from '@lobehub/ui';
+import { Block, Icon, Text } from '@lobehub/ui';
+import { cssVar } from 'antd-style';
+import { LockIcon, UsersIcon } from 'lucide-react';
 import { memo } from 'react';
 import { useTranslation } from 'react-i18next';
 
+import { useActiveWorkspaceId } from '@/business/client/hooks/useActiveWorkspaceId';
 import { useTaskStore } from '@/store/task';
 import { taskDetailSelectors } from '@/store/task/selectors';
 
 import TaskPriorityTag from '../features/TaskPriorityTag';
 import TaskStatusTag from '../features/TaskStatusTag';
 import TaskTriggerTag from '../features/TaskTriggerTag';
+import TaskVisibilityTag from '../features/TaskVisibilityTag';
 import TaskScheduleConfig from './TaskScheduleConfig';
 
 interface StatusMeta {
@@ -47,6 +51,8 @@ const TaskProperties = memo(() => {
   const automationMode = useTaskStore(taskDetailSelectors.activeTaskAutomationMode);
   const schedulePattern = useTaskStore(taskDetailSelectors.activeTaskSchedulePattern);
   const scheduleTimezone = useTaskStore(taskDetailSelectors.activeTaskScheduleTimezone);
+  const visibility = useTaskStore(taskDetailSelectors.activeTaskVisibility);
+  const activeWorkspaceId = useActiveWorkspaceId();
 
   if (!taskId) return null;
 
@@ -104,6 +110,34 @@ const TaskProperties = memo(() => {
           />
         </Block>
       </TaskScheduleConfig>
+
+      {activeWorkspaceId && (
+        <TaskVisibilityTag taskIdentifier={taskId} visibility={visibility}>
+          <Block
+            clickable
+            horizontal
+            align="center"
+            gap={10}
+            paddingBlock={4}
+            paddingInline={8}
+            variant={'borderless'}
+          >
+            <Icon
+              color={cssVar.colorTextSecondary}
+              icon={visibility === 'private' ? LockIcon : UsersIcon}
+              size={16}
+            />
+            <Text weight={500}>
+              {t(
+                `createTask.visibility.${visibility}` as never,
+                visibility === 'private'
+                  ? { defaultValue: 'Private' }
+                  : { defaultValue: 'Workspace' },
+              )}
+            </Text>
+          </Block>
+        </TaskVisibilityTag>
+      )}
     </Block>
   );
 });

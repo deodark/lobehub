@@ -65,6 +65,10 @@ const createSchema = z.object({
   priority: z.number().min(0).max(4).optional(),
   schedulePattern: z.string().optional(),
   scheduleTimezone: z.string().optional(),
+  // When omitted, the server derives visibility from the parent task or the
+  // assignee agent's visibility (private agent → private task). UI surfaces
+  // such as the top-level "Tasks" create form pass it explicitly.
+  visibility: z.enum(['private', 'public']).optional(),
 });
 
 const updateSchema = z.object({
@@ -1020,6 +1024,50 @@ export const taskRouter = router({
       });
     }
   }),
+
+  updateVisibility: taskProcedureWrite
+    .input(idInput.merge(z.object({ visibility: z.enum(['private', 'public']) })))
+    .mutation(async ({ input, ctx }) => {
+      try {
+        const resolved = await resolveOrThrow(ctx.taskModel, input.id);
+
+        // Owner can always change visibility on their own tasks. In workspace
+        // mode, allow workspace owners to override (mirrors the transferTask
+        // policy at line ~1166): only they can change visibility on tasks
+        // created by other members.
+        if (ctx.workspaceId && resolved.createdByUserId !== ctx.userId) {
+          const [membership] = await ctx.serverDB
+            .select({ role: workspaceMembers.role })
+            .from(workspaceMembers)
+            .where(
+              and(
+                eq(workspaceMembers.workspaceId, ctx.workspaceId),
+                eq(workspaceMembers.userId, ctx.userId),
+                isNull(workspaceMembers.deletedAt),
+              ),
+            )
+            .limit(1);
+          if (!membership || membership.role !== 'owner') {
+            throw new TRPCError({
+              code: 'FORBIDDEN',
+              message: 'Only the task creator or workspace owner can change visibility',
+            });
+          }
+        }
+
+        const updated = await ctx.taskModel.updateVisibility(resolved.id, input.visibility);
+        if (!updated) throw new TRPCError({ code: 'NOT_FOUND', message: 'Task not found' });
+        return { data: updated, message: 'Task visibility updated', success: true };
+      } catch (error) {
+        if (error instanceof TRPCError) throw error;
+        console.error('[task:updateVisibility]', error);
+        throw new TRPCError({
+          cause: error,
+          code: 'INTERNAL_SERVER_ERROR',
+          message: 'Failed to update task visibility',
+        });
+      }
+    }),
 
   acquireTaskLock: taskProcedureWrite.input(idInput).mutation(async ({ ctx, input }) => {
     if (!ctx.workspaceId) return { expiresAt: null, holderId: null, lockedByOther: false };

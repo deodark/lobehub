@@ -50,6 +50,10 @@ export interface CreateTaskInput {
   schedulePattern?: string;
   scheduleTimezone?: string;
   sortOrder?: number;
+  // Explicit visibility for the new task. When omitted, the service derives it
+  // from `parentTaskId` (if present) or `assigneeAgentId`'s visibility, and
+  // finally falls back to the schema default ('public').
+  visibility?: 'private' | 'public';
 }
 
 export interface UpdateStatusResult {
@@ -103,14 +107,28 @@ export class TaskService {
 
     const createData: CreateTaskInput & { config?: Record<string, unknown> } = { ...input };
 
+    let parentVisibility: 'private' | 'public' | undefined;
     if (createData.parentTaskId) {
       const parent = await this.resolveOrThrow(createData.parentTaskId);
       createData.parentTaskId = parent.id;
+      parentVisibility = parent.visibility;
     }
 
     if (input.assigneeAgentId) {
       const snapshot = await this.agentModel.getAgentModelConfig(input.assigneeAgentId);
       if (snapshot) createData.config = snapshot;
+    }
+
+    // Resolve visibility precedence: explicit caller value > parent task
+    // (subtasks inherit) > assignee agent (private agent → private task) >
+    // schema default ('public').
+    if (createData.visibility === undefined) {
+      if (parentVisibility) {
+        createData.visibility = parentVisibility;
+      } else if (input.assigneeAgentId) {
+        const agentVisibility = await this.agentModel.getAgentVisibility(input.assigneeAgentId);
+        if (agentVisibility === 'private') createData.visibility = 'private';
+      }
     }
 
     return this.taskModel.create(createData);
@@ -712,6 +730,7 @@ export class TaskService {
       status: task.status,
       userId: task.assigneeUserId,
       verify: this.taskModel.getVerifyConfig(task),
+      visibility: task.visibility,
       subtasks,
       activities: activities.length > 0 ? activities : undefined,
       topicCount: topics.length > 0 ? topics.length : undefined,

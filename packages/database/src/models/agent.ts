@@ -170,6 +170,21 @@ export class AgentModel {
     return this.enrichAgentWithKnowledge(agent);
   };
 
+  /**
+   * Returns the agent's visibility, scoped by the model's ownership filter, or
+   * `null` when the agent is missing or not visible to the current caller.
+   * Used by the task service to inherit a private agent's visibility onto
+   * tasks created against it.
+   */
+  getAgentVisibility = async (id: string): Promise<'private' | 'public' | null> => {
+    const rows = await this.db
+      .select({ visibility: agents.visibility })
+      .from(agents)
+      .where(and(eq(agents.id, id), this.ownership()))
+      .limit(1);
+    return (rows[0]?.visibility as 'private' | 'public' | undefined) ?? null;
+  };
+
   existsById = async (id: string): Promise<boolean> => {
     const rows = await this.db
       .select({ id: agents.id })

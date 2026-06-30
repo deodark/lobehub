@@ -12,3 +12,4 @@ export { default as TaskPriorityTag } from './TaskPriorityTag';
 export { default as TaskStatusIcon } from './TaskStatusIcon';
 export { default as TaskSubtaskProgressTag } from './TaskSubtaskProgressTag';
 export { default as TaskTriggerTag } from './TaskTriggerTag';
+export { default as TaskVisibilityTag } from './TaskVisibilityTag';

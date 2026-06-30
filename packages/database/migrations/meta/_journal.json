@@ -812,6 +812,13 @@
       "when": 1782465903930,
       "tag": "0115_add_workspace_private_visibility",
       "breakpoints": true
+    },
+    {
+      "idx": 116,
+      "version": "7",
+      "when": 1782753877069,
+      "tag": "0116_task_add_visibility",
+      "breakpoints": true
     }
   ],
   "version": "6"

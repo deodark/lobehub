@@ -1817,4 +1817,131 @@ describe('TaskModel', () => {
       expect(cloned!.workspaceId).toBeNull();
     });
   });
+
+  describe('visibility', () => {
+    const wsId = 'task-visibility-ws';
+
+    beforeEach(async () => {
+      await serverDB
+        .insert(workspaces)
+        .values({
+          id: wsId,
+          name: 'Visibility WS',
+          primaryOwnerId: userId,
+          slug: wsId,
+        })
+        .onConflictDoNothing();
+    });
+
+    it('should default new tasks to public', async () => {
+      const ws = new TaskModel(serverDB, userId, wsId);
+      const task = await ws.create({ instruction: 'Public default' });
+      expect(task.visibility).toBe('public');
+    });
+
+    it('should persist explicit private visibility on create', async () => {
+      const ws = new TaskModel(serverDB, userId, wsId);
+      const task = await ws.create({
+        instruction: 'Private task',
+        visibility: 'private',
+      });
+      expect(task.visibility).toBe('private');
+    });
+
+    it('should hide private tasks from other workspace members in list', async () => {
+      const alice = new TaskModel(serverDB, userId, wsId);
+      const bob = new TaskModel(serverDB, userId2, wsId);
+
+      const privateTask = await alice.create({
+        instruction: 'Alice secret',
+        visibility: 'private',
+      });
+      const sharedTask = await alice.create({
+        instruction: 'Alice public',
+        visibility: 'public',
+      });
+
+      const aliceList = await alice.list();
+      const aliceIds = aliceList.tasks.map((t) => t.id).sort();
+      expect(aliceIds).toEqual([privateTask.id, sharedTask.id].sort());
+
+      const bobList = await bob.list();
+      const bobIds = bobList.tasks.map((t) => t.id);
+      expect(bobIds).toEqual([sharedTask.id]);
+    });
+
+    it('should hide private tasks from other workspace members in findById', async () => {
+      const alice = new TaskModel(serverDB, userId, wsId);
+      const bob = new TaskModel(serverDB, userId2, wsId);
+
+      const privateTask = await alice.create({
+        instruction: 'Alice secret',
+        visibility: 'private',
+      });
+
+      expect(await alice.findById(privateTask.id)).not.toBeNull();
+      expect(await bob.findById(privateTask.id)).toBeNull();
+    });
+
+    it('should cascade updateVisibility to descendants and child tables', async () => {
+      const alice = new TaskModel(serverDB, userId, wsId);
+      const bob = new TaskModel(serverDB, userId2, wsId);
+
+      const root = await alice.create({
+        instruction: 'Root',
+        visibility: 'private',
+      });
+      const child = await alice.create({
+        instruction: 'Child',
+        parentTaskId: root.id,
+        visibility: 'private',
+      });
+      await alice.addDependency(root.id, child.id, 'blocks');
+
+      // Sanity check: Bob can't see the private subtree
+      expect((await bob.list()).total).toBe(0);
+
+      const promoted = await alice.updateVisibility(root.id, 'public');
+      expect(promoted?.visibility).toBe('public');
+
+      const aliceChild = await alice.findById(child.id);
+      expect(aliceChild?.visibility).toBe('public');
+
+      // Bob now sees both
+      const bobList = await bob.list();
+      expect(bobList.tasks.map((t) => t.id).sort()).toEqual([root.id, child.id].sort());
+
+      // Dependency row also flipped to public
+      const deps = await alice.getDependencies(root.id);
+      expect(deps).toHaveLength(1);
+      expect(deps[0].visibility).toBe('public');
+    });
+
+    it('should reject updateVisibility for tasks not visible to the caller', async () => {
+      const alice = new TaskModel(serverDB, userId, wsId);
+      const bob = new TaskModel(serverDB, userId2, wsId);
+
+      const aliceTask = await alice.create({
+        instruction: 'Alice secret',
+        visibility: 'private',
+      });
+
+      const result = await bob.updateVisibility(aliceTask.id, 'public');
+      expect(result).toBeNull();
+      const reload = await alice.findById(aliceTask.id);
+      expect(reload?.visibility).toBe('private');
+    });
+
+    it('should keep personal-mode behavior unchanged', async () => {
+      const personal = new TaskModel(serverDB, userId);
+      const task = await personal.create({ instruction: 'Personal' });
+      // Personal-mode rows default to public via the column default, but the
+      // ownership filter ignores visibility (everything personal is implicitly
+      // owner-only). Each user only sees their own personal tasks.
+      expect(task.visibility).toBe('public');
+
+      const other = new TaskModel(serverDB, userId2);
+      expect((await other.list()).total).toBe(0);
+    });
+  });
 });

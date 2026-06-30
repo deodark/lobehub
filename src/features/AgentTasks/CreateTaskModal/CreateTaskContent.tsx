@@ -5,10 +5,11 @@ import { ActionIcon, Block, Flexbox, Icon, Text } from '@lobehub/ui';
 import { useModalContext } from '@lobehub/ui/base-ui';
 import { Button } from 'antd';
 import { cssVar } from 'antd-style';
-import { Minimize2, Paperclip, UserCircle2, X } from 'lucide-react';
+import { LockIcon, Minimize2, Paperclip, UserCircle2, UsersIcon, X } from 'lucide-react';
 import { type KeyboardEvent, memo, useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
+import { useActiveWorkspaceId } from '@/business/client/hooks/useActiveWorkspaceId';
 import { EditorCanvas } from '@/features/EditorCanvas';
 import {
   getAttachmentFileIdsFromEditor,
@@ -21,6 +22,7 @@ import { useTaskStore } from '@/store/task';
 import AssigneeAgentSelector from '../features/AssigneeAgentSelector';
 import AssigneeAvatar from '../features/AssigneeAvatar';
 import TaskPriorityTag from '../features/TaskPriorityTag';
+import TaskVisibilityTag from '../features/TaskVisibilityTag';
 import { useAgentDisplayMeta } from '../shared/useAgentDisplayMeta';
 
 export interface CreateTaskContentProps {
@@ -48,9 +50,14 @@ const CreateTaskContent = memo<CreateTaskContentProps>(
     const isCreating = useTaskStore((s) => s.isCreatingTask);
     const updateSystemStatus = useGlobalStore((s) => s.updateSystemStatus);
 
+    const activeWorkspaceId = useActiveWorkspaceId();
+
     const [title, setTitle] = useState('');
     const [priority, setPriority] = useState(0);
     const [assigneeAgentId, setAssigneeAgentId] = useState<string | undefined>(agentId);
+    // Default to private in workspace mode so the user has to opt in to share.
+    // In personal mode the field is irrelevant and the chip is hidden anyway.
+    const [visibility, setVisibility] = useState<'private' | 'public'>('private');
 
     const editor = useEditor();
     const instructionRef = useRef('');
@@ -86,6 +93,8 @@ const CreateTaskContent = memo<CreateTaskContentProps>(
         instruction: instruction || title.trim(),
         name: title.trim() || undefined,
         priority: priority || undefined,
+        // Only send visibility in workspace mode; personal mode ignores it.
+        visibility: activeWorkspaceId ? visibility : undefined,
       });
 
       if (result) {
@@ -95,7 +104,18 @@ const CreateTaskContent = memo<CreateTaskContentProps>(
           identifier: result.identifier,
         });
       }
-    }, [assigneeAgentId, canCreateTask, close, createTask, editor, onCreated, priority, title]);
+    }, [
+      activeWorkspaceId,
+      assigneeAgentId,
+      canCreateTask,
+      close,
+      createTask,
+      editor,
+      onCreated,
+      priority,
+      title,
+      visibility,
+    ]);
 
     const handleSubmitRef = useRef(handleSubmit);
     useEffect(() => {
@@ -220,6 +240,34 @@ const CreateTaskContent = memo<CreateTaskContentProps>(
                 </AssigneeAgentSelector>
               );
             })()}
+
+            {activeWorkspaceId && (
+              <TaskVisibilityTag visibility={visibility} onChange={setVisibility}>
+                <Block
+                  clickable
+                  horizontal
+                  align="center"
+                  gap={6}
+                  paddingBlock={4}
+                  paddingInline={8}
+                  variant={'borderless'}
+                >
+                  <Icon
+                    color={cssVar.colorTextDescription}
+                    icon={visibility === 'private' ? LockIcon : UsersIcon}
+                    size={14}
+                  />
+                  <Text fontSize={12}>
+                    {t(
+                      `createTask.visibility.${visibility}` as never,
+                      visibility === 'private'
+                        ? { defaultValue: 'Private' }
+                        : { defaultValue: 'Workspace' },
+                    )}
+                  </Text>
+                </Block>
+              </TaskVisibilityTag>
+            )}
 
             <ActionIcon
               icon={Paperclip}

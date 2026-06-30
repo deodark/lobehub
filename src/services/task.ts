@@ -62,7 +62,11 @@ class TaskService {
     priority?: number;
     schedulePattern?: string;
     scheduleTimezone?: string;
+    visibility?: 'private' | 'public';
   }) => lambdaClient.task.create.mutate(params);
+
+  updateVisibility = async (id: string, visibility: 'private' | 'public') =>
+    lambdaClient.task.updateVisibility.mutate({ id, visibility });
 
   update = async (
     id: string,
