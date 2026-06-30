@@ -123,19 +123,23 @@ LobeHub uses Ant Design's **semantic token** model. A token's name encodes its *
 
 **Functional color** is reserved for meaning: `colorPrimary` for the single most important action, focus, and links — note it is **monochrome by default** (near-black in light, near-white in dark) and only takes on a hue when the user picks a primary color, which keeps the default UI calm; `colorSuccess`, `colorWarning`, `colorError`, `colorInfo` for state. Each functional and accent color also exposes a derived ramp — `color{Name}`, `color{Name}Hover`, `color{Name}Active`, `color{Name}Bg`, `color{Name}Border`, `color{Name}Text`, and `color{Name}Fill*` — so you can build tinted backgrounds, borders, and text without picking raw values.
 
+**Applying tokens in components.** The text ramp and the functional tints are full token sets, but component prop shorthands expose only part of them — so apply the token directly when no shorthand covers it. In `@lobehub/ui`, the `Text` `type` prop accepts `secondary | success | warning | danger | info` only (there is no `tertiary` / `quaternary`), and `Tag` `color` has no `primary`. For `colorTextTertiary` / `colorTextQuaternary` text, and for any `colorPrimary` or functional tint a shorthand lacks, set the token via `color={cssVar.colorTextTertiary}` (or a styled class) instead of `type="tertiary"` / `color="primary"` — the invalid prop values fail silently (rendered as a literal color or ignored), not with an error.
+
 ## Typography
 
 **Geist** sets UI and prose; **Geist Mono** sets code, data, and tabular figures. The stacks above fall through to `-apple-system`, then **HarmonyOS Sans SC** and platform CJK faces, so Latin and CJK text stay visually consistent.
 
 Use the scale tokens rather than setting size, weight, or line height by hand:
 
-- **Body & labels** — `fontSize` (14px) covers most UI and body text; `fontSizeSM` (12px) for captions and dense metadata; `fontSizeLG` (16px) for emphasis and large controls. Line height is generous (\~1.57) for readability.
+- **Body & labels** — `fontSize` (14px) covers most UI and body text; `fontSizeSM` (12px) for captions and dense metadata; `fontSizeLG` (16px) for emphasis and large controls. Line height is generous (\~1.57) for readability. The body/label scale is **12 / 14 / 16** — there is **no 13px token**. Some legacy UI hard-codes `fontSize={13}` for secondary text; treat that as drift and round to 12 or 14, and rank text with the `colorText*` opacity ramp rather than reaching for an in-between size. Don't introduce new off-scale sizes.
 - **Headings** — `fontSizeHeading1`–`fontSizeHeading5` (38 → 16px) title pages and sections; pair with `fontWeightStrong` (600).
 - **Code & numbers** — the `fontFamilyCode` stack; prefer tabular figures when numbers must align.
 
 ## Layout
 
 Spacing follows a **4px scale** via Ant Design padding/margin tokens: `XXS` 4, `XS` 8, `SM` 12, base 16, `MD` 20, `LG` 24, `XL` 32. Keep a clear rhythm — tight space inside a group (8px), more between groups (16px), most between sections (24–32px). Cards use 16–24px padding.
+
+The 4px scale governs **gaps, padding, and margins** — and only those. Two things are deliberately **not** on it: **radius is a separate scale** (see [Shapes](#shapes); it includes a 6px step, `borderRadiusSM`), so never reuse a radius value as spacing; and **icon pixel sizes** (12 / 14 / 16 / 18 / 20) and 1px hairline borders are dimensions, not spacing. Off-scale spacing values (6, 10, 13…) are drift — round to the nearest scale step. Reserve a one-off off-scale value for genuine optical tuning, never as a default.
 
 Layouts must work across appearances and form factors: every surface ships **light and dark** and **desktop and mobile** variants. Mobile is not an afterthought — `src/routes/(mobile)` and `.mobile`/`.desktop` component variants exist for exactly this. Center primary content and let side padding grow at wider breakpoints.
 
