@@ -1,7 +1,7 @@
 ---
 version: alpha
 name: LobeHub
-description: LobeHub's design system, built on @lobehub/ui (Ant Design + antd-style). Tokens are themeable — primary and neutral colors are user-configurable and resolve to CSS variables (cssVar key `lobe-vars`). This is the Light theme; the Dark theme uses the same token names with different values and is documented in DESIGN.dark.md.
+description: LobeHub's design system, built on lobe-ui (@lobehub/ui). Tokens are themeable — primary and neutral colors are user-configurable and resolve to CSS variables (cssVar key `lobe-vars`). This is the Light theme; the Dark theme uses the same token names with different values and is documented in DESIGN.dark.md.
 themeable:
   # Users pick a primary and a neutral; components must read the semantic tokens
   # below rather than hard-coding any single value from this list.
@@ -13,7 +13,7 @@ themeable:
     default: ~ # the built-in `gray` scale when unset
     options: [mauve, slate, sage, olive, sand]
 colors:
-  # Semantic tokens (Ant Design names) — the real contract components consume via
+  # Semantic tokens (lobe-ui token names) — the real contract components consume via
   # `cssVar.colorPrimary`, `cssVar.colorText`, etc. Light-theme defaults shown.
   colorPrimary: '#222222' # monochrome by default; becomes the chosen primaryColor[9]
   colorSuccess: '#379d4a' # green
@@ -46,7 +46,7 @@ elevation:
 typography:
   fontFamily: 'Geist, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Roboto, "Helvetica Neue", Arial, "HarmonyOS Sans SC", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei UI", "Microsoft YaHei", ui-sans-serif, system-ui, sans-serif'
   fontFamilyCode: '"Geist Mono", ui-monospace, SFMono-Regular, "SF Mono", Menlo, "Cascadia Code", Consolas, "HarmonyOS Sans SC", monospace'
-  # Body & label scale (Ant Design)
+  # Body & label scale (lobe-ui)
   fontSizeSM: 12 # captions, dense metadata
   fontSize: 14 # default body and UI text
   fontSizeLG: 16 # emphasis, large controls
@@ -61,7 +61,7 @@ typography:
   fontSizeHeading5: 16
   fontWeightStrong: 600
 spacing:
-  # 4px base scale (Ant Design padding/margin tokens)
+  # 4px base scale (lobe-ui padding/margin tokens)
   XXS: 4
   XS: 8
   SM: 12
@@ -84,7 +84,7 @@ controls:
 
 ## Overview
 
-LobeHub is an AI-native product suite (chat, agents, tools). Its design system is built on **[@lobehub/ui](https://github.com/lobehub/lobe-ui)** — a layer over **Ant Design** styled with **antd-style** — and is themed at runtime through `ThemeProvider` with the cssVar key `lobe-vars`.
+LobeHub is an AI-native product suite (chat, agents, tools). Its design system is built on **lobe-ui** ([@lobehub/ui](https://github.com/lobehub/lobe-ui)) — LobeHub's own component and theming layer — and is themed at runtime through `ThemeProvider` with the cssVar key `lobe-vars`.
 
 The aesthetic is calm and content-first: generous whitespace, restrained color, and a near-neutral canvas so the conversation and the user's content stay in focus. Color carries state and hierarchy, not decoration. Every surface is designed for both light and dark appearance and for desktop and mobile.
 
@@ -97,7 +97,7 @@ The YAML above lists the default **Light** theme. The Dark theme redefines the s
 
 ## Design Values
 
-The philosophy behind every LobeHub interface, adapted from Ant Design's design values. Read these before designing a flow.
+The philosophy behind every LobeHub interface. Read these before designing a flow.
 
 - **Natural** — Minimize cognitive load. The next step should be obvious without thinking; carry the user forward with sensible defaults, AI assistance, and smooth transitions rather than making them stop and figure things out.
 - **Meaningful** — Root every screen in the user's real goal. Make the objective clear, give immediate feedback on each action, and always point at the next meaningful step.
@@ -108,7 +108,7 @@ The philosophy behind every LobeHub interface, adapted from Ant Design's design 
 
 ## Colors
 
-LobeHub uses Ant Design's **semantic token** model. A token's name encodes its **role**, so the same name resolves to the right value in light, dark, and under any user theme. Always consume tokens by name — in antd-style, `cssVar.colorText`, `cssVar.colorBgContainer`, and so on.
+LobeHub uses lobe-ui's **semantic token** model. A token's name encodes its **role**, so the same name resolves to the right value in light, dark, and under any user theme. Always consume tokens by name — `cssVar.colorText`, `cssVar.colorBgContainer`, and so on.
 
 **Text** uses solid neutrals from the `gray` scale that hold contrast on any surface — rank information with them rather than reaching for color:
 
@@ -137,7 +137,7 @@ Use the scale tokens rather than setting size, weight, or line height by hand:
 
 ## Layout
 
-Spacing follows a **4px scale** via Ant Design padding/margin tokens: `XXS` 4, `XS` 8, `SM` 12, base 16, `MD` 20, `LG` 24, `XL` 32. Keep a clear rhythm — tight space inside a group (8px), more between groups (16px), most between sections (24–32px). Cards use 16–24px padding.
+Spacing follows a **4px scale** via lobe-ui padding/margin tokens: `XXS` 4, `XS` 8, `SM` 12, base 16, `MD` 20, `LG` 24, `XL` 32. Keep a clear rhythm — tight space inside a group (8px), more between groups (16px), most between sections (24–32px). Cards use 16–24px padding.
 
 The 4px scale governs **gaps, padding, and margins** — and only those. Two things are deliberately **not** on it: **radius is a separate scale** (see [Shapes](#shapes); it includes a 6px step, `borderRadiusSM`), so never reuse a radius value as spacing; and **icon pixel sizes** (12 / 14 / 16 / 18 / 20) and 1px hairline borders are dimensions, not spacing. Off-scale spacing values (6, 10, 13…) are drift — round to the nearest scale step. Reserve a one-off off-scale value for genuine optical tuning, never as a default.
 
@@ -176,13 +176,12 @@ Prefer the system's components over bespoke markup, in this order:
 
 1. **`@lobehub/ui/base-ui`** — headless primitives, first choice for new code (`Select`, `Modal` / `createModal` / `confirmModal`, `DropdownMenu`, `ContextMenu`, `Popover`, `ScrollArea`, `Switch`, `Toast`, `FloatingSheet`).
 2. **`@lobehub/ui`** root — richer composed components when base-ui has no counterpart.
-3. **antd** — last resort, only when neither covers the need.
 
-When base-ui has the component, use it — don't reach for the root or antd version.
+When base-ui has the component, use it — don't reach for the root version, and only drop to an underlying primitive when lobe-ui has no counterpart at all.
 
-Default control height is **36px** (`controlHeight`); use `controlHeightSM` 28px and `controlHeightLG` 40px for the other sizes. Buttons follow Ant Design's hierarchy — one **primary** (`colorPrimary` fill) per view for the most important action, **default** (surface fill + `colorBorder`) for ordinary actions, **text/link** for low-emphasis, and **danger** (`colorError`) for destructive actions. Hover and active states step through the `colorFill*` / `color{Name}Hover` ramps; disabled uses `colorTextQuaternary` text with a not-allowed cursor. Every interactive element shows a visible focus ring at `:focus-visible`.
+Default control height is **36px** (`controlHeight`); use `controlHeightSM` 28px and `controlHeightLG` 40px for the other sizes. Buttons follow lobe-ui's hierarchy — one **primary** (`colorPrimary` fill) per view for the most important action, **default** (surface fill + `colorBorder`) for ordinary actions, **text/link** for low-emphasis, and **danger** (`colorError`) for destructive actions. Hover and active states step through the `colorFill*` / `color{Name}Hover` ramps; disabled uses `colorTextQuaternary` text with a not-allowed cursor. Every interactive element shows a visible focus ring at `:focus-visible`.
 
-Style components with **antd-style**: prefer `createStaticStyles` with `cssVar.*` (zero-runtime) and fall back to `createStyles` + `token` only when styles need runtime computation.
+Style components with lobe-ui's styling layer: prefer `createStaticStyles` with `cssVar.*` (zero-runtime) and fall back to `createStyles` + `token` only when styles need runtime computation.
 
 ## Voice & Content
 
@@ -237,7 +236,7 @@ Every error states **what happened**, optionally **why**, and **what to do next*
 - **Do** design all four data states — empty, loading, error, success. **Don't** ship only the happy path.
 - **Do** build light + dark and desktop + mobile for every surface. **Don't** treat mobile or dark as an afterthought.
 - **Do** keep `colorBg*` (surfaces) and the text/`colorFill` scales distinct. **Don't** swap a surface token for a text token.
-- **Do** reach for `@lobehub/ui/base-ui` first, then `@lobehub/ui`, then antd. **Don't** rebuild a component the system already provides.
+- **Do** reach for `@lobehub/ui/base-ui` first, then `@lobehub/ui`. **Don't** rebuild a component the system already provides.
 - **Do** honor `prefers-reduced-motion` and the user's animation mode. **Don't** add long or looping animation.
 - **Do** hold WCAG AA contrast (4.5:1 for body text) and show a visible `:focus-visible` ring. **Don't** remove an outline without a visible replacement.
 - **Do** keep one radius family and at most two font weights per view. **Don't** mix rounded and sharp corners.

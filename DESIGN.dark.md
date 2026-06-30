@@ -11,7 +11,7 @@ themeable:
     default: ~ # the built-in `gray` scale when unset
     options: [mauve, slate, sage, olive, sand]
 colors:
-  # Semantic tokens (Ant Design names). Dark-theme defaults shown.
+  # Semantic tokens (lobe-ui token names). Dark-theme defaults shown.
   colorPrimary: '#eeeeee' # monochrome by default; becomes the chosen primaryColor[9]
   colorSuccess: '#c4f042' # lime (dark uses a brighter hue than light's green)
   colorWarning: '#ffb224' # gold
